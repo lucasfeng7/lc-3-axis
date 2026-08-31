@@ -189,6 +189,37 @@ What is different here is that the purchased cells *are* the structure.
 
 ---
 
+## Firmware
+
+[`firmware/lc_3_axis.ino`](firmware/lc_3_axis.ino) runs on the Teensy 4.0. It
+discovers the multiplexer channels at boot, stores the calibration matrix and
+the discovered channel map together in EEPROM, and refuses to load a
+calibration whose map does not match the hardware present.
+
+Libraries are Adafruit NAU7802 and Adafruit BusIO. I²C runs at 400 kHz on pins
+18 and 19, with each ADC at gain 128 and 320 SPS.
+
+Serial at 115200, newline endings. Output is plain CSV in newtons.
+
+```
+0.0142,-0.0031,1.9847
+```
+
+| key | does |
+|---|---|
+| `t` | re-tare, since zero drifts with temperature and the matrix does not |
+| `r` | stream Fx, Fy, Fz |
+| `p` | pause |
+| `d` | also show the four raw cell counts |
+| `u` | switch newtons and gram-force |
+
+Lines beginning `#` are messages rather than data, so filter them when parsing.
+
+CAD is not published yet. The two plates and the tip are simple FDM parts and
+the geometry that matters is the contact height `h`, given above.
+
+---
+
 ## Paper
 
 > L. Feng, A. Slepyan and N. Thakor. *An Accurate Three-Axis Force Sensor with
