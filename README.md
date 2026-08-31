@@ -82,6 +82,11 @@ Pushes along a single axis and pushes that load all three at once are resolved
 alike. Mounting on the moving arm raises the noise floor three to four times
 above the bench.
 
+The full run is in [`media/handguiding.mp4`](media/handguiding.mp4), 44 seconds,
+and the four instants above are taken from it. The four panels correspond to
+roughly 18, 25, 29 and 33 seconds in. Audio is removed and the video is
+downscaled from the 4K original, which is why it is 3 MB rather than 135 MB.
+
 ---
 
 ## Bill of materials
