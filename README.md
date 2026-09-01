@@ -1,6 +1,6 @@
-# LC 3-Axis
+# An Accurate Three-Axis Force Sensor with No Designed Compliant Element
 
-**A three-axis force sensor with no designed compliant element.**
+**Project page with the video: [lucasfeng7.github.io/lc-3-axis](https://lucasfeng7.github.io/lc-3-axis/)**
 
 Four off-the-shelf load cells carry the entire load path. There is no custom
 flexure, so the creep, hysteresis and temperature compensation that dominate
