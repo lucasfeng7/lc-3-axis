@@ -1,4 +1,4 @@
-# An Accurate Three-Axis Force Sensor with No Designed Compliant Element
+# An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element
 
 **Project page with the video: [lucasfeng7.github.io/lc-3-axis](https://lucasfeng7.github.io/lc-3-axis/)**
 
@@ -37,7 +37,9 @@ Off-axis leakage stays below 1 percent. Three overloads of 19.9 to 28.7 N
 against a 19.6 N rated limit each returned to zero within 0.05 N, so the range
 is a purchasing decision rather than a redesign.
 
-Output is 212 Hz, emitted once every cell has a fresh sample.
+Each converter runs at 320 SPS, so the four interleaved give roughly
+1200 samples per second in aggregate. A frame carrying fresh data from all
+four cells is emitted at 212 Hz.
 
 ---
 
@@ -52,16 +54,15 @@ carries the same contact force, over 344,424 in-contact samples.
 
 | axis | gain | r² | residual about the gain |
 |---|---|---|---|
-| Fz | 0.953 | 0.998 | 0.048 N, 1.0 % of range |
-| Fx | 0.865 | 0.993 | 0.114 N, 2.3 % of range |
-| Fy | 0.873 | 0.993 | 0.121 N, 2.5 % of range |
+| Fz | 0.953 | 0.998 | 0.0480 N, 0.98 % of range |
+| Fx | 0.865 | 0.993 | 0.1137 N, 2.32 % of range |
+| Fy | 0.873 | 0.993 | 0.1211 N, 2.47 % of range |
 
 Tracking is close. Absolute scale is not. The disagreement is a fixed gain
 rather than noise or nonlinearity, so a controller absorbs it without losing
-resolution or repeatability, but **its cause is not yet attributed**. It varies
-across three references at 13, 15 and 23 percent, where a fixed calibration
-error would repeat, and matching the contact height to ±2 mm bounds the lever
-arm at ±5 percent.
+resolution or repeatability. The likely cause is that the arm was moved by hand
+during the comparison, which varies the contact height and so the lever arm the
+lateral force is computed through. The absolute tip height was never measured.
 
 The two frames were aligned with an orthogonal transform rather than a general
 3×3 fit. A general fit would have recalibrated the sensor against the reference
@@ -227,9 +228,8 @@ the geometry that matters is the contact height `h`, given above.
 
 ## Paper
 
-> L. Feng, A. Slepyan and N. Thakor. *An Accurate Three-Axis Force Sensor with
-> No Designed Compliant Element.* IROS 2026 Workshop on Sensors and Actuators
-> for Dexterous Manipulation.
+> L. Feng, A. Slepyan, K. Murthy and N. Thakor. *An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element.*
+> IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation.
 
 Every number in the paper is traced to a source file. Nothing is quoted that
 was not measured.

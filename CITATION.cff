@@ -1,21 +1,25 @@
 cff-version: 1.2.0
-title: "LC 3-Axis: a three-axis force sensor with no designed compliant element"
+title: "An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element"
 message: "If you use this work, please cite the paper below."
 authors:
   - family-names: Feng
     given-names: Lucas
   - family-names: Slepyan
     given-names: Ariel
+  - family-names: Murthy
+    given-names: Krishna
   - family-names: Thakor
     given-names: Nitish
 preferred-citation:
   type: conference-paper
-  title: "An Accurate Three-Axis Force Sensor with No Designed Compliant Element"
+  title: "An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element"
   authors:
     - family-names: Feng
       given-names: Lucas
     - family-names: Slepyan
       given-names: Ariel
+    - family-names: Murthy
+      given-names: Krishna
     - family-names: Thakor
       given-names: Nitish
   collection-title: "IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation"
