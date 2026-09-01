@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>An Accurate Three-Axis Force Sensor with No Designed Compliant Element</title>
+<title>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</title>
 <meta name="description" content="A three-axis force sensor in which four off-the-shelf load cells carry the entire load path. Millinewton resolution for a $116.55 bill of materials.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
 <style>
@@ -116,10 +116,10 @@
     </div>
     <div>
       <p class="eyebrow">Open hardware · Three-axis force</p>
-      <h1>An Accurate Three-Axis Force Sensor with No Designed Compliant Element</h1>
+      <h1>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</h1>
       <p class="lede">Four off-the-shelf load cells carry the entire load path. There is no custom flexure, so the creep, hysteresis and temperature behavior that dominate a low-cost force sensor are inherited from a mass-produced part instead of introduced by one nobody characterized.</p>
-      <p class="byline">Lucas Feng · Ariel Slepyan · Nitish Thakor</p>
-      <p class="affil">Johns Hopkins University · <a href="mailto:lfeng22@jh.edu">lfeng22@jh.edu</a></p>
+      <p class="byline">Lucas Feng · Ariel Slepyan · Krishna Murthy · Nitish Thakor</p>
+      <p class="affil">Johns Hopkins University · <a href="mailto:lfeng22@jhu.edu">{lfeng22, aslepya1, kmj, nitish}@jhu.edu</a></p>
       <div class="btns">
         <a class="btn primary" href="https://github.com/lucasfeng7/lc-3-axis">Repository</a>
         <a class="btn" href="#bom">Bill of materials</a>
@@ -210,7 +210,7 @@
         <tr><td>Hysteresis (% of span)</td><td class="num">0.111</td><td class="num">0.421</td><td class="num">1.112</td></tr>
       </tbody>
     </table>
-    <p>Off-axis leakage stays below 1&nbsp;%. Three overloads of 19.9 to 28.7&nbsp;N against a 19.6&nbsp;N rated limit each returned to zero within 0.05&nbsp;N, so range is a purchasing decision rather than a redesign. Output is 212&nbsp;Hz, emitted once every cell has a fresh sample.</p>
+    <p>Off-axis leakage stays below 1&nbsp;%. Three overloads of 19.9 to 28.7&nbsp;N against a 19.6&nbsp;N rated limit each returned to zero within 0.05&nbsp;N, so range is a purchasing decision rather than a redesign. Each converter runs at 320&nbsp;SPS, so the four interleaved give roughly 1200 samples per second in aggregate. A frame carrying fresh data from all four cells is emitted at 212&nbsp;Hz.</p>
   </div>
 </section>
 
@@ -225,9 +225,9 @@
     <table class="tbl">
       <thead><tr><th>Axis</th><th>Scale factor</th><th>r&sup2;</th><th>Residual about the fit</th></tr></thead>
       <tbody>
-        <tr><td>F<sub>z</sub></td><td class="num">0.953</td><td class="num">0.998</td><td class="num">0.048 N &middot; 1.0 % of range</td></tr>
-        <tr><td>F<sub>x</sub></td><td class="num">0.865</td><td class="num">0.993</td><td class="num">0.114 N &middot; 2.3 % of range</td></tr>
-        <tr><td>F<sub>y</sub></td><td class="num">0.873</td><td class="num">0.993</td><td class="num">0.121 N &middot; 2.5 % of range</td></tr>
+        <tr><td>F<sub>z</sub></td><td class="num">0.953</td><td class="num">0.998</td><td class="num">0.0480 N &middot; 0.98 % of range</td></tr>
+        <tr><td>F<sub>x</sub></td><td class="num">0.865</td><td class="num">0.993</td><td class="num">0.1137 N &middot; 2.32 % of range</td></tr>
+        <tr><td>F<sub>y</sub></td><td class="num">0.873</td><td class="num">0.993</td><td class="num">0.1211 N &middot; 2.47 % of range</td></tr>
       </tbody>
     </table>
     <p>Tracking is close. Absolute scale is not. What separates the two instruments is a fixed scale factor, not scatter and not a bend in the response, so a controller absorbs it in its gain without losing resolution or repeatability. The likely cause is that the arm was moved by hand during the comparison, which varies the contact height and therefore the lever arm.</p>
@@ -275,7 +275,7 @@ Mx =  Fy·h - Fz·yc</code></pre>
     <h2>Known limitations</h2>
     <p class="lede">Stating these is the point of the project, so they are not buried.</p>
     <ul class="lim" style="margin-top:20px">
-      <li><b>The lateral scale factor of about 0.87 is not fully attributed.</b> It is a fixed gain, so it folds into a controller gain, but the contact height was matched by eye and the absolute tip height was never measured.</li>
+      <li><b>The lateral scale factor of about 0.87.</b> It is a fixed gain, so it folds into a controller gain. The likely cause is that the arm was moved by hand during the comparison, which varies the contact height and so the lever arm. The absolute tip height was never measured.</li>
       <li><b>The stack has no preload.</b> Under lateral load the printed plates lift slightly rather than sharing load linearly, giving a 15 to 20&nbsp;% difference between loading and unloading. The fix is mechanical and has been identified. Applying it would invalidate the calibration behind the comparison above.</li>
       <li><b>Three axes only, and only for a known contact point.</b> This is a probe, not a plate.</li>
       <li><b>The F<sub>z</sub> gain has not reproduced between sessions</b>, 1.052 on one day against 0.953 on another, so 9&nbsp;% is the current reproducibility limit of the comparison rather than 1&nbsp;%.</li>
@@ -295,7 +295,7 @@ Mx =  Fy·h - Fz·yc</code></pre>
 
 <footer>
   <div class="wrap">
-    <p><b>L. Feng, A. Slepyan and N. Thakor.</b> <i>An Accurate Three-Axis Force Sensor with No Designed Compliant Element.</i> IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation.</p>
+    <p><b>L. Feng, A. Slepyan, K. Murthy and N. Thakor.</b> <i>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element.</i> IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation.</p>
     <p>Every number quoted here is traced to a source file in the repository. MIT licensed &middot; <a href="https://github.com/lucasfeng7/lc-3-axis">github.com/lucasfeng7/lc-3-axis</a></p>
   </div>
 </footer>
