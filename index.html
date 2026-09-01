@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LC 3-Axis — a force sensor with no designed compliant element</title>
+<title>An Accurate Three-Axis Force Sensor with No Designed Compliant Element</title>
 <meta name="description" content="A three-axis force sensor in which four off-the-shelf load cells carry the entire load path. Millinewton resolution for a $116.55 bill of materials.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
 <style>
@@ -52,7 +52,7 @@
     font-family:var(--mono); font-size:.75rem; letter-spacing:.14em;
     text-transform:uppercase; color:var(--accent); margin:0 0 .8rem;
   }
-  h1{font-size:2.6rem; margin:0 0 1rem}
+  h1{font-size:2.15rem; margin:0 0 1rem}
   .byline{color:var(--muted); margin:0 0 .25rem}
   .affil{color:var(--faint); font-size:.92rem; margin:0 0 1.5rem}
   .btns{display:flex; flex-wrap:wrap; gap:10px}
@@ -75,8 +75,9 @@
   figure{margin:0 0 28px}
   figure img{width:100%; display:block; border-radius:10px; border:1px solid var(--line); background:var(--card)}
   figcaption{font-size:.86rem; color:var(--muted); margin-top:.6rem}
-  .two{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:end}
-  .two img{border:1px solid var(--line)}
+  .two{display:flex; gap:22px; align-items:flex-end; justify-content:center; flex-wrap:wrap}
+  .two figure{margin:0}
+  .two img{height:330px; width:auto; max-width:100%; border:1px solid var(--line)}
 
   /* ---------- tables ---------- */
   .tbl{width:100%; border-collapse:collapse; margin:0 0 1rem; font-size:.94rem; display:block; overflow-x:auto}
@@ -98,8 +99,9 @@
   @media (max-width:820px){
     .hero{grid-template-columns:1fr; gap:28px}
     .hero .media{max-width:280px; margin:0 auto}
-    h1{font-size:2rem}
-    .cols,.two{grid-template-columns:1fr}
+    h1{font-size:1.7rem}
+    .cols{grid-template-columns:1fr}
+    .two img{height:auto; width:100%}
     section{padding:48px 0}
   }
 </style>
@@ -114,7 +116,7 @@
     </div>
     <div>
       <p class="eyebrow">Open hardware · Three-axis force</p>
-      <h1>A force sensor with no designed compliant element</h1>
+      <h1>An Accurate Three-Axis Force Sensor with No Designed Compliant Element</h1>
       <p class="lede">Four off-the-shelf load cells carry the entire load path. There is no custom flexure, so the creep, hysteresis and temperature behavior that dominate a low-cost force sensor are inherited from a mass-produced part instead of introduced by one nobody characterized.</p>
       <p class="byline">Lucas Feng · Ariel Slepyan · Nitish Thakor</p>
       <p class="affil">Johns Hopkins University · <a href="mailto:lfeng22@jh.edu">lfeng22@jh.edu</a></p>
