@@ -6,34 +6,44 @@ load path, so the creep, hysteresis, and temperature behavior that would
 normally come from a custom-built flexure are instead specified on a
 datasheet.
 
-Lucas Feng, Ariel Slepyan, Krishna Murthy, Nitish Thakor — Johns Hopkins
-University
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-PDF-red.svg)](paper/lc-3-axis-iros2026.pdf)
+[![Project Page](https://img.shields.io/badge/Project%20Page-lucasfeng7.github.io-blue.svg)](https://lucasfeng7.github.io/lc-3-axis/)
 
-**[Paper (PDF)](paper/lc-3-axis-iros2026.pdf)** &middot;
-**[Project page](https://lucasfeng7.github.io/lc-3-axis/)** &middot;
-**[License](LICENSE)** (MIT)
-
-<p align="center">
-  <img src="docs/img/assembled.jpg" width="46%" alt="The sensor as built, with the top plate and interchangeable tip assembled">
-  <img src="docs/img/internals.jpg" width="46%" alt="The four load cells that form the structure, with the converters on the perimeter and the multiplexer at the center">
-</p>
+Lucas Feng, Ariel Slepyan, Krishna Murthy, Nitish Thakor
+Johns Hopkins University
 
 ---
 
-## Specs
+## Overview
 
-| | |
-|---|---|
-| Calibrated range | 0&ndash;4.9 N, all axes |
-| Noise floor, 1&sigma; | 2.6&ndash;3.5 mN |
-| Off-axis leakage | < 1 % |
-| Agreement with a commercial reference | 1.0&ndash;2.5 % of full scale |
-| Bill of materials | \$116.55 |
+Almost every low-cost multi-axis force sensor is built around a custom
+compliant structure, whose deformation is measured by an inexpensive readout.
+That structure sets the range and sensitivity, and also introduces creep,
+hysteresis, and temperature dependence that are rarely characterized in
+full. This design removes the custom structure: four TAL221 load cells,
+already manufacturer-characterized, carry the entire load path, and a single
+fitted matrix maps their readings to force. The result is a three-axis
+sensor for \$116.55 in parts, with a 2.6&ndash;3.5 mN noise floor, validated
+against a commercial reference to 1.0&ndash;2.5 % of full scale.
 
-Full measurements, validation methodology, and comparison to prior work are
-in the [paper](paper/lc-3-axis-iros2026.pdf).
+For the full write-up, measurements, and comparison to prior work, see the
+[paper](paper/lc-3-axis-iros2026.pdf) or the
+[project page](https://lucasfeng7.github.io/lc-3-axis/).
 
----
+## Repository structure
+
+```
+.
+├── cad/          SolidWorks source for the printed parts and top-level assembly
+├── firmware/     Teensy 4.0 firmware (calibration, streaming, EEPROM storage)
+├── paper/        Workshop paper (PDF)
+├── media/        Demonstration video
+├── docs/img/     Figures used by the project page
+├── index.html    Project page (GitHub Pages)
+├── CITATION.cff
+└── LICENSE
+```
 
 ## Bill of materials
 
@@ -57,7 +67,19 @@ Three part types are custom, and all three are FDM 3D printed.
 
 No custom PCB. No machining. No cast or molded elastomer.
 
----
+## CAD
+
+SolidWorks source for the printed parts is in [`cad/`](cad/):
+
+| File | Part |
+|---|---|
+| [`LC 3-Axis.SLDASM`](cad/LC%203-Axis.SLDASM) | top-level assembly |
+| [`Top Plate.SLDPRT`](cad/Top%20Plate.SLDPRT) | upper plate |
+| [`Bottom Plate.SLDPRT`](cad/Bottom%20Plate.SLDPRT) | lower plate |
+| [`Calibration Tip.SLDPRT`](cad/Calibration%20Tip.SLDPRT) | interchangeable tip used for calibration, `h` = 38.6 mm |
+
+The assembly references the load cells, converters and fasteners as
+toolbox/purchased components, which are not included as separate files.
 
 ## How it works
 
@@ -76,29 +98,6 @@ fixed tip geometry rather than a general-purpose contact plate. A fitted
 `(Fx, Fy, Fz)`, absorbing placement error, cell-to-cell gain variation, and
 wiring polarity. Firmware identifies which multiplexer channel each
 converter answers on at boot, so physical cell order doesn't matter.
-
----
-
-## Calibrating
-
-Calibrate against known masses rather than another sensor:
-
-1. **Lateral axes (Fx, Fy):** clamp the sensor axis-horizontal at a bench
-   edge and hang known masses from the tip, so gravity loads the sensing
-   axis perpendicular by construction.
-2. **Axial axis (Fz):** stack a known mass directly on the tip.
-3. Fit the 3×4 calibration matrix against the tared cell counts at each
-   load.
-4. (Optional) validate against an independent reference — we used an
-   OptoForce in series on a UR5e.
-
-<p align="center">
-  <img src="docs/img/calib-axial.jpg" width="30%" alt="The sensor with a known mass stacked directly on the tip for axial calibration">
-  <img src="docs/img/calib-deadweight.jpg" width="30%" alt="The sensor clamped axis-horizontal at the bench edge with known masses hanging from the tip">
-  <img src="docs/img/calib-optoforce.jpg" width="30%" alt="The two instruments in series on the UR5e, the sensor on the flange and the OptoForce below it">
-</p>
-
----
 
 ## Firmware
 
@@ -126,27 +125,22 @@ Serial at 115200, newline endings. Output is plain CSV in newtons.
 
 Lines beginning `#` are messages rather than data, so filter them when parsing.
 
----
+## Calibrating
 
-## CAD
+Calibrate against known masses rather than another sensor:
 
-SolidWorks source for the printed parts is in [`cad/`](cad/):
-
-| File | Part |
-|---|---|
-| [`LC 3-Axis.SLDASM`](cad/LC%203-Axis.SLDASM) | top-level assembly |
-| [`Top Plate.SLDPRT`](cad/Top%20Plate.SLDPRT) | upper plate |
-| [`Bottom Plate.SLDPRT`](cad/Bottom%20Plate.SLDPRT) | lower plate |
-| [`Calibration Tip.SLDPRT`](cad/Calibration%20Tip.SLDPRT) | interchangeable tip used for calibration, `h` = 38.6 mm |
-
-The assembly references the load cells, converters and fasteners as
-toolbox/purchased components, which are not included as separate files.
-
----
+1. **Lateral axes (Fx, Fy):** clamp the sensor axis-horizontal at a bench
+   edge and hang known masses from the tip, so gravity loads the sensing
+   axis perpendicular by construction.
+2. **Axial axis (Fz):** stack a known mass directly on the tip.
+3. Fit the 3×4 calibration matrix against the tared cell counts at each
+   load.
+4. (Optional) validate against an independent reference — we used an
+   OptoForce in series on a UR5e.
 
 ## Citation
 
-```
+```bibtex
 @inproceedings{feng2026lc3axis,
   title     = {An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element},
   author    = {Feng, Lucas and Slepyan, Ariel and Murthy, Krishna and Thakor, Nitish},
