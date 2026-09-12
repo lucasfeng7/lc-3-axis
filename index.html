@@ -29,7 +29,6 @@
   figure.image img{ border:1px solid #eee; display:block; }
   video.landscape{ width:100%; display:block; background:#000; border:1px solid #eee; }
 
-  .caption{ font-size:.92rem; color:#5b6470; }
   footer.footer{ background:#fafafa; border-top:1px solid #e8e8e8; }
 </style>
 </head>
@@ -104,14 +103,27 @@
 
 <section class="section">
   <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-10">
-        <video class="landscape" autoplay muted loop playsinline preload="metadata">
-          <source src="media/handguiding.mp4" type="video/mp4">
-        </video>
-        <p class="caption has-text-centered mt-3">
-          Admittance hand-guiding on a UR5e at 199.8&nbsp;Hz &mdash; the operator pushes, the sensor measures, the arm follows.
-        </p>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3"><a id="abstract">Abstract</a></h2>
+        <div class="content has-text-justified">
+          <p>
+            Affordable multi-axis force sensors are usually designed with a custom compliant part,
+            and the deformation of that part is measured after a load is applied. Any creep,
+            hysteresis, or thermal sensitivity in that part then becomes a property of the finished
+            sensor. Its accuracy then depends on operating temperature and load history in ways a
+            single calibration cannot capture. We instead developed a sensor using four commercial
+            load cells that are manufacturer-characterized to carry the full load. On top of the
+            mechanical design, one fitted matrix that maps readings to force accounts for assembly
+            tolerances, gain differences, and wiring polarity. The resulting three-axis sensor costs
+            under $120 and has a 2.6&ndash;3.5&nbsp;mN noise floor. Off-axis leakage remains below
+            1&nbsp;%, and lateral hysteresis remains below 0.5&nbsp;% of span. After one scale
+            factor, its output agrees with a commercial reference to 1.0&ndash;2.5&nbsp;% of full
+            scale across more than 300,000 in-contact samples. The design suits tools whose contact
+            point is known and makes an accurate three-axis sensor accessible to any research lab
+            with a 3D printer.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -119,6 +131,28 @@
 
 <section class="section">
   <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Admittance Hand-Guiding</h2>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <video class="landscape" autoplay muted loop playsinline preload="metadata">
+          <source src="media/handguiding.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Sensor Structure</h2>
+      </div>
+    </div>
     <div class="columns is-centered">
       <div class="column is-half">
         <figure class="image"><img src="docs/img/assembled.jpg" alt="The sensor as built, with the top plate and interchangeable tip assembled"></figure>
@@ -127,14 +161,16 @@
         <figure class="image"><img src="docs/img/internals.jpg" alt="The four load cells that form the structure, with converters on the perimeter and the multiplexer at the center"></figure>
       </div>
     </div>
-    <p class="caption has-text-centered">
-      Assembled, and open &mdash; four load cells forming the structure, converters on the perimeter, multiplexer at the center.
-    </p>
   </div>
 </section>
 
 <section class="section">
   <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Calibration</h2>
+      </div>
+    </div>
     <div class="columns is-centered">
       <div class="column is-narrow">
         <figure class="image"><img src="docs/img/calib-deadweight.jpg" alt="The sensor clamped axis-horizontal at the bench edge with known masses hanging from the tip"></figure>
@@ -143,23 +179,14 @@
         <figure class="image"><img src="docs/img/calib-optoforce.jpg" alt="The two instruments in series on the UR5e, the sensor on the flange and the OptoForce below it"></figure>
       </div>
     </div>
-    <p class="caption has-text-centered">
-      Calibration against known masses, and validation in series with a commercial OptoForce reference on the UR5e.
-    </p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container is-max-desktop has-text-centered">
-    <p class="is-size-5">
-      Four off-the-shelf load cells carry the entire load path, with no custom compliant element.
-    </p>
   </div>
 </section>
 
 <section class="section" id="bibtex">
   <div class="container is-max-desktop content">
-    <h2 class="title has-text-centered">Citation</h2>
+    <div class="columns is-centered has-text-centered">
+      <h2 class="title">BibTeX</h2>
+    </div>
     <pre><code>@inproceedings{feng2026lc3axis,
   title     = {An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element},
   author    = {Feng, Lucas and Slepyan, Ariel and Murthy, Krishna and Thakor, Nitish},
