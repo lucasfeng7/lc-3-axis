@@ -3,300 +3,487 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</title>
-<meta name="description" content="A three-axis force sensor in which four off-the-shelf load cells carry the entire load path. Millinewton resolution for a $116.55 bill of materials.">
+<meta name="description" content="LC 3-Axis: a three-axis force sensor in which four off-the-shelf load cells carry the entire load path. Millinewton resolution for a $116.55 bill of materials.">
+<meta name="keywords" content="force sensor, force/torque sensing, load cell, robotics, open hardware">
+<title>LC 3-Axis: An Accurate Three-Axis Force Sensor with No Designed Compliant Element</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
-  :root{
-    --bg:#ffffff; --alt:#f6f7f9; --card:#ffffff;
-    --ink:#10141a; --muted:#5b6470; --faint:#8b939e;
-    --line:#e3e6ea; --accent:#2a78d6;
-    --fx:#2a78d6; --fy:#eb6834; --fz:#1baf7a; --warn:#c1121f;
-    --radius:14px;
-    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  :root{ --fx:#2a78d6; --fy:#eb6834; --fz:#1baf7a; }
+  body{ font-family:'Noto Sans', sans-serif; }
+  h1, h2, h3, .publication-title, .publication-authors, .navbar-item{ font-family:'Inter', sans-serif; }
+  .navbar{ box-shadow:0 1px 0 #eee; }
+  .navbar-item.brand{ font-weight:700; letter-spacing:-0.02em; }
+  .publication-title{ font-weight:800; letter-spacing:-0.02em; }
+  .publication-authors a{ color:hsl(204,86%,53%) !important; }
+  .publication-authors a:hover{ text-decoration:underline; }
+  .author-block{ display:inline-block; }
+  section.hero-teaser video, section.hero-teaser img{
+    border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.15); width:100%; display:block;
   }
-  @media (prefers-color-scheme:dark){
-    :root{
-      --bg:#0f1216; --alt:#141920; --card:#161b22;
-      --ink:#e6e9ee; --muted:#9aa4b1; --faint:#7b8592;
-      --line:#242c36; --accent:#5b9df0;
-    }
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family:var(--sans); font-size:17px; line-height:1.65;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:1080px; margin:0 auto; padding:0 24px}
-  a{color:var(--accent); text-decoration:none}
-  a:hover{text-decoration:underline}
-  h1,h2,h3{line-height:1.2; letter-spacing:-0.02em; margin:0}
-  h2{font-size:1.55rem; margin:0 0 .6rem}
-  h3{font-size:1.05rem; margin:0 0 .35rem}
-  p{margin:0 0 1rem}
-  section{padding:64px 0; border-top:1px solid var(--line)}
-  .lede{color:var(--muted); font-size:1.05rem; max-width:64ch}
-
-  /* ---------- hero ---------- */
-  header{padding:56px 0 64px}
-  .hero{display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:44px; align-items:center}
-  .hero video{
-    width:100%; display:block; border-radius:var(--radius);
-    background:#000; box-shadow:0 10px 40px rgba(0,0,0,.18);
-  }
-  .vidnote{font-size:.8rem; color:var(--faint); margin:.6rem 0 0; text-align:center}
-  .eyebrow{
-    font-family:var(--mono); font-size:.75rem; letter-spacing:.14em;
-    text-transform:uppercase; color:var(--accent); margin:0 0 .8rem;
-  }
-  h1{font-size:2.15rem; margin:0 0 1rem}
-  .byline{color:var(--muted); margin:0 0 .25rem}
-  .affil{color:var(--faint); font-size:.92rem; margin:0 0 1.5rem}
-  .btns{display:flex; flex-wrap:wrap; gap:10px}
-  .btn{
-    display:inline-block; padding:9px 16px; border-radius:9px;
-    border:1px solid var(--line); background:var(--card); color:var(--ink);
-    font-size:.9rem; font-weight:600;
-  }
-  .btn:hover{border-color:var(--accent); color:var(--accent); text-decoration:none}
-  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-  .btn.primary:hover{filter:brightness(1.08); color:#fff}
-
-  /* ---------- stats ---------- */
-  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px}
-  .stat{background:var(--alt); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px}
-  .stat .n{font-size:1.7rem; font-weight:700; letter-spacing:-0.03em; display:block}
-  .stat .l{font-size:.82rem; color:var(--muted); display:block; margin-top:.2rem}
-
-  /* ---------- figures ---------- */
-  figure{margin:0 0 28px}
-  figure img{width:100%; display:block; border-radius:10px; border:1px solid var(--line); background:var(--card)}
-  figcaption{font-size:.86rem; color:var(--muted); margin-top:.6rem}
-  .two{display:flex; gap:22px; align-items:flex-end; justify-content:center; flex-wrap:wrap}
-  .two figure{margin:0}
-  .two img{height:330px; width:auto; max-width:100%; border:1px solid var(--line)}
-
-  /* ---------- tables ---------- */
-  .tbl{width:100%; border-collapse:collapse; margin:0 0 1rem; font-size:.94rem; display:block; overflow-x:auto}
-  .tbl th,.tbl td{padding:9px 12px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap}
-  .tbl th{font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); font-weight:600}
-  .tbl td.num{font-variant-numeric:tabular-nums}
-  code{font-family:var(--mono); font-size:.88em; background:var(--alt); padding:.12em .38em; border-radius:5px}
-  pre{background:var(--alt); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow-x:auto; font-family:var(--mono); font-size:.85rem; line-height:1.5}
-  pre code{background:none; padding:0}
-
-  .cols{display:grid; grid-template-columns:1fr 1fr; gap:34px}
-  .note{border-left:3px solid var(--accent); padding:2px 0 2px 16px; color:var(--muted)}
-  .lim{list-style:none; padding:0; margin:0}
-  .lim li{padding:12px 0; border-bottom:1px solid var(--line)}
-  .lim b{color:var(--ink)}
-  .ax{display:inline-block; width:.62em; height:.62em; border-radius:2px; margin-right:.3em; vertical-align:baseline}
-  footer{padding:44px 0 64px; color:var(--faint); font-size:.88rem; border-top:1px solid var(--line)}
-
-  @media (max-width:820px){
-    .hero{grid-template-columns:1fr; gap:28px}
-    .hero .media{max-width:280px; margin:0 auto}
-    h1{font-size:1.7rem}
-    .cols{grid-template-columns:1fr}
-    .two img{height:auto; width:100%}
-    section{padding:48px 0}
-  }
+  figure.image img{ border-radius:8px; border:1px solid #eee; }
+  .section.is-light{ background:#f6f7f9; }
+  .notification.is-link.is-light{ background:#eaf2fc; }
+  .ax{ display:inline-block; width:.62em; height:.62em; border-radius:2px; margin-right:.35em; vertical-align:baseline; }
+  .lim-list{ list-style:none; padding:0; margin:0; }
+  .lim-list li{ padding:14px 0; border-bottom:1px solid #eee; }
+  .lim-list li:last-child{ border-bottom:none; }
+  code{ background:#f2f4f6; }
+  pre{ background:#f2f4f6; border-radius:8px; }
+  .team-figure img{ width:88px; height:88px; object-fit:cover; }
+  footer.footer{ background:#fafafa; }
+  .table.is-tight td, .table.is-tight th{ white-space:nowrap; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap hero">
-    <div class="media">
-      <video src="media/handguiding.mp4" autoplay loop muted playsinline preload="metadata"></video>
-      <p class="vidnote">Admittance hand-guiding at 199.8&nbsp;Hz. The operator pushes, the sensor measures, the arm moves.</p>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="container is-max-desktop">
+    <div class="navbar-brand">
+      <a class="navbar-item brand" href="#">⚖️ LC 3-Axis</a>
     </div>
-    <div>
-      <p class="eyebrow">Open hardware · Three-axis force</p>
-      <h1>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</h1>
-      <p class="lede">Four off-the-shelf load cells carry the entire load path. There is no custom flexure, so the creep, hysteresis and temperature behavior that dominate a low-cost force sensor are inherited from a mass-produced part instead of introduced by one nobody characterized.</p>
-      <p class="byline">Lucas Feng · Ariel Slepyan · Krishna Murthy · Nitish Thakor</p>
-      <p class="affil">Johns Hopkins University · <a href="mailto:lfeng22@jhu.edu">{lfeng22, aslepya1, kmj, nitish}@jhu.edu</a></p>
-      <div class="btns">
-        <a class="btn primary" href="https://github.com/lucasfeng7/lc-3-axis">Repository</a>
-        <a class="btn" href="#bom">Bill of materials</a>
-        <a class="btn" href="firmware/lc_3_axis.ino">Firmware</a>
-        <a class="btn" href="media/handguiding.mp4">Full video</a>
+    <div class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#bom">Hardware</a>
+        <a class="navbar-item" href="#performance">Performance</a>
+        <a class="navbar-item" href="#limitations">Limitations</a>
+        <a class="navbar-item" href="#cad">CAD &amp; Firmware</a>
+        <a class="navbar-item" href="#bibtex">Citation</a>
+        <a class="navbar-item" href="https://github.com/lucasfeng7/lc-3-axis"><i class="fab fa-github mr-1"></i> Repository</a>
       </div>
     </div>
   </div>
-</header>
+</nav>
 
-<section>
-  <div class="wrap">
-    <div class="stats">
-      <div class="stat"><span class="n">2.6&ndash;3.5 mN</span><span class="l">Noise floor, 1&sigma;</span></div>
-      <div class="stat"><span class="n">$116.55</span><span class="l">Bill of materials</span></div>
-      <div class="stat"><span class="n">0&ndash;4.9 N</span><span class="l">Calibrated range, 3 axes</span></div>
-      <div class="stat"><span class="n">344,424</span><span class="l">Samples against a commercial reference</span></div>
-    </div>
-  </div>
-</section>
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">LC 3-Axis: An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</h1>
+          <div class="is-size-5 publication-authors mt-4">
+            <span class="author-block">Lucas Feng,</span>
+            <span class="author-block">Ariel Slepyan,</span>
+            <span class="author-block">Krishna Murthy,</span>
+            <span class="author-block">Nitish Thakor</span>
+          </div>
+          <div class="is-size-6 has-text-grey mt-2">
+            <span class="author-block">Johns Hopkins University</span>
+          </div>
+          <div class="is-size-6 has-text-grey">
+            <a href="mailto:lfeng22@jhu.edu">{lfeng22, aslepya1, kmj, nitish}@jhu.edu</a>
+          </div>
 
-<section>
-  <div class="wrap">
-    <h2>The idea</h2>
-    <div class="cols">
-      <div>
-        <p>Almost every low-cost multi-axis force sensor works the same way. An inexpensive readout &mdash; optical, capacitive, a camera watching fiducials &mdash; measures how much a compliant structure deforms. That structure sets the range and the sensitivity, and it also contributes creep, hysteresis and drift with temperature.</p>
-        <p>Those terms are rarely quantified in published characterizations. So a user cannot tell how much of the reported error belongs to the readout and how much belongs to the flexure, and cannot predict how either behaves in a different task or a warmer room.</p>
-      </div>
-      <div>
-        <p>Here there is no such structure. Four commercial load cells are both the beams and the transducers, so the load path runs through parts whose beam geometry, gauge placement and bridge compensation were set at the factory.</p>
-        <p class="note">Creep and temperature behavior come from a datasheet rather than from a part we made ourselves. You look them up instead of discovering them mid-experiment.</p>
-        <p>One fitted matrix absorbs placement error, cell-to-cell gain variation, wiring polarity and cross-coupling. Nothing has to be built accurately, only repeatably.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>The hardware</h2>
-    <p class="lede">Seventeen part types. Three are ours, and all three are printed. No custom PCB, no machining, no cast or molded elastomer.</p>
-    <div class="two" style="margin-top:26px">
-      <figure><img src="docs/img/exploded.png" alt="Exploded view of the sensor assembly"></figure>
-      <figure><img src="docs/img/internals.jpg" alt="The four load cells between the plates, with converters and multiplexer labeled"></figure>
-    </div>
-    <figcaption>Left, the assembly with the tip and microcontroller omitted. Right, the four cells forming the structure, the converters on the perimeter and the I&sup2;C multiplexer at the center.</figcaption>
-  </div>
-</section>
-
-<section id="bom">
-  <div class="wrap">
-    <h2>Bill of materials</h2>
-    <p class="lede">$116.55 for the electromechanical parts. Fasteners, cabling and filament excluded.</p>
-    <table class="tbl">
-      <thead><tr><th>Qty</th><th>Part</th><th>Role</th></tr></thead>
-      <tbody>
-        <tr><td class="num">4</td><td>TAL221 500&nbsp;g bar load cell</td><td>the structure and the transducer, both</td></tr>
-        <tr><td class="num">4</td><td>NAU7802 24-bit ADC breakout</td><td>one per cell, I&sup2;C address <code>0x2A</code></td></tr>
-        <tr><td class="num">1</td><td>TCA9548A I&sup2;C multiplexer</td><td>address <code>0x70</code>, A2:A0 to GND</td></tr>
-        <tr><td class="num">1</td><td>Teensy 4.0</td><td>reads the cells, applies the matrix, streams CSV</td></tr>
-      </tbody>
-    </table>
-    <table class="tbl">
-      <thead><tr><th>Printed part</th><th>Process</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td>Upper plate</td><td>FDM, PLA</td><td>carries the tip</td></tr>
-        <tr><td>Lower plate</td><td>FDM, PLA</td><td>bolts to the robot flange</td></tr>
-        <tr><td>Interchangeable tip</td><td>FDM, PLA</td><td>sets contact height <code>h</code>, 38.6&nbsp;mm here</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Measured performance</h2>
-    <p class="lede">Calibrated range 0 to 4.9&nbsp;N on every axis. Leave-one-out figures throughout, so each point is predicted by a fit built without it. In-sample residuals are 2.2 times smaller.</p>
-    <table class="tbl" style="margin-top:22px">
-      <thead><tr><th></th>
-        <th><span class="ax" style="background:var(--fx)"></span>F<sub>x</sub></th>
-        <th><span class="ax" style="background:var(--fy)"></span>F<sub>y</sub></th>
-        <th><span class="ax" style="background:var(--fz)"></span>F<sub>z</sub></th></tr></thead>
-      <tbody>
-        <tr><td>Leave-one-out error (N)</td><td class="num">0.0431</td><td class="num">0.0330</td><td class="num">0.0357</td></tr>
-        <tr><td>Noise floor, 1&sigma; (mN)</td><td class="num">3.2</td><td class="num">3.5</td><td class="num">2.6</td></tr>
-        <tr><td>On-axis decoupling (%)</td><td class="num">100.1</td><td class="num">99.7</td><td class="num">99.6</td></tr>
-        <tr><td>Hysteresis (% of span)</td><td class="num">0.111</td><td class="num">0.421</td><td class="num">1.112</td></tr>
-      </tbody>
-    </table>
-    <p>Off-axis leakage stays below 1&nbsp;%. Three overloads of 19.9 to 28.7&nbsp;N against a 19.6&nbsp;N rated limit each returned to zero within 0.05&nbsp;N, so range is a purchasing decision rather than a redesign. Each converter runs at 320&nbsp;SPS, so the four interleaved give roughly 1200 samples per second in aggregate. A frame carrying fresh data from all four cells is emitted at 212&nbsp;Hz.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Against a commercial reference</h2>
-    <p class="lede">Both instruments in series on a UR5e so each carries the same contact force, over 344,424 in-contact samples.</p>
-    <figure style="margin-top:24px">
-      <img src="docs/img/agreement.png" alt="Response against the OptoForce reference">
-      <figcaption>Dashed gray is the 1:1 line, black a least-squares fit through the origin. The spread below 1&nbsp;N in (a) is the reference's own 0.0319&nbsp;N quantization rather than sensor noise.</figcaption>
-    </figure>
-    <table class="tbl">
-      <thead><tr><th>Axis</th><th>Scale factor</th><th>r&sup2;</th><th>Residual about the fit</th></tr></thead>
-      <tbody>
-        <tr><td>F<sub>z</sub></td><td class="num">0.953</td><td class="num">0.998</td><td class="num">0.0480 N &middot; 0.98 % of range</td></tr>
-        <tr><td>F<sub>x</sub></td><td class="num">0.865</td><td class="num">0.993</td><td class="num">0.1137 N &middot; 2.32 % of range</td></tr>
-        <tr><td>F<sub>y</sub></td><td class="num">0.873</td><td class="num">0.993</td><td class="num">0.1211 N &middot; 2.47 % of range</td></tr>
-      </tbody>
-    </table>
-    <p>Tracking is close. Absolute scale is not. What separates the two instruments is a fixed scale factor, not scatter and not a bend in the response, so a controller absorbs it in its gain without losing resolution or repeatability. The likely cause is that the arm was moved by hand during the comparison, which varies the contact height and therefore the lever arm.</p>
-    <p class="note">The two frames were aligned with an orthogonal transform, not a general 3&times;3 fit. A general fit would have recalibrated the sensor against the reference and then reported the agreement it had just produced.</p>
-    <div class="two" style="margin-top:26px">
-      <figure><img src="docs/img/calib-deadweight.jpg" alt="Deadweight calibration at the bench edge"></figure>
-      <figure><img src="docs/img/calib-optoforce.jpg" alt="The two instruments in series on the UR5e"></figure>
-    </div>
-    <figcaption>Calibration is anchored to known masses, not transferred from another sensor. Left, the sensor clamped axis-horizontal with masses hanging from the tip, so gravity loads it perpendicular to the sensing axis. Right, the comparison rig.</figcaption>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Closing the loop</h2>
-    <p class="lede">Force in, Cartesian velocity out. The operator pushes the tool and the arm follows.</p>
-    <figure style="margin-top:24px">
-      <img src="docs/img/handguide.png" alt="Four instants from an admittance hand-guiding run">
-      <figcaption>Four instants from the run at the top of this page, with the measured components inset on a common 4.9&nbsp;N scale. The red arrow is the measured force projected into the image from the contact point, so its length is foreshortened. Panel (a) is a push down, (b) across the view, (c) along the tool, (d) loads all three axes at once.</figcaption>
-    </figure>
-    <p>The loop runs at 199.8&nbsp;Hz. It responds to single-axis pushes and to simultaneous loading of all three axes, which confirms the sensor is fast and accurate enough on a moving robot rather than only on a bench. Mounting on the arm raises the noise floor three to four times above the bench.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>How it works</h2>
-    <div class="cols">
-      <div>
-        <p>Four vertical cells sense exactly three things, <code>Fz</code>, <code>Mx</code> and <code>My</code>. A lateral force is recovered from the moment it makes about the plane of the cells. For a contact at <code>(xc, yc)</code> and height <code>h</code> above that plane,</p>
-        <pre><code>My = -Fx·h + Fz·xc
-Mx =  Fy·h - Fz·yc</code></pre>
-        <p>so the contact point has to be known. That suits a probe with fixed tip geometry rather than a general-purpose contact plate.</p>
-      </div>
-      <div>
-        <p>A single 3&times;4 matrix with bias maps four tared cell counts to <code>(Fx, Fy, Fz)</code>. Firmware discovers which multiplexer channel each converter answers on at boot, so physical cell order does not matter, and it refuses to load a calibration whose channel map does not match the hardware present.</p>
-        <p>Four cells give four readings, but an external load can only produce three independent patterns among them. The fourth is a self-stress mode that no external force can excite, and nothing in calibration touches it. Ridge regularization holds its weight near zero rather than letting cell noise be amplified through it.</p>
+          <div class="column has-text-centered mt-4">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/lucasfeng7/lc-3-axis" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Repository</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#cad" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-cube"></i></span>
+                  <span>CAD Files</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="firmware/lc_3_axis.ino" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-microchip"></i></span>
+                  <span>Firmware</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="media/handguiding.mp4" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-video"></i></span>
+                  <span>Full Video</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="CITATION.cff" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-quote-right"></i></span>
+                  <span>Cite</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <h2>Known limitations</h2>
-    <p class="lede">Stating these is the point of the project, so they are not buried.</p>
-    <ul class="lim" style="margin-top:20px">
-      <li><b>The lateral scale factor of about 0.87.</b> It is a fixed gain, so it folds into a controller gain. The likely cause is that the arm was moved by hand during the comparison, which varies the contact height and so the lever arm. The absolute tip height was never measured.</li>
-      <li><b>The stack has no preload.</b> Under lateral load the printed plates lift slightly rather than sharing load linearly, giving a 15 to 20&nbsp;% difference between loading and unloading. The fix is mechanical and has been identified. Applying it would invalidate the calibration behind the comparison above.</li>
-      <li><b>Three axes only, and only for a known contact point.</b> This is a probe, not a plate.</li>
-      <li><b>The F<sub>z</sub> gain has not reproduced between sessions</b>, 1.052 on one day against 0.953 on another, so 9&nbsp;% is the current reproducibility limit of the comparison rather than 1&nbsp;%.</li>
-    </ul>
+<section class="hero-teaser">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <video autoplay muted loop playsinline preload="metadata">
+          <source src="media/handguiding.mp4" type="video/mp4">
+        </video>
+        <h2 class="subtitle has-text-centered mt-4">
+          Admittance hand-guiding at 199.8&nbsp;Hz. The operator pushes, LC 3-Axis measures, the arm moves.
+        </h2>
+      </div>
+    </div>
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <h2>Firmware</h2>
-    <p><a href="firmware/lc_3_axis.ino"><code>firmware/lc_3_axis.ino</code></a> runs on the Teensy 4.0. I&sup2;C at 400&nbsp;kHz on pins 18 and 19, each ADC at gain 128 and 320&nbsp;SPS. Serial at 115200, newline endings. Output is plain CSV in newtons.</p>
-    <pre><code>0.0142,-0.0031,1.9847</code></pre>
-    <p>Lines beginning <code>#</code> are messages rather than data, so filter them when parsing. Press <code>t</code> to re-tare, since zero drifts with temperature and the matrix does not. <code>r</code> streams, <code>p</code> pauses, <code>d</code> adds the raw cell counts.</p>
-    <p>CAD is not published yet. The two plates and the tip are simple FDM parts and the geometry that matters is the contact height <code>h</code>.</p>
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Almost every low-cost multi-axis force sensor works the same way: an inexpensive readout &mdash;
+            optical, capacitive, a camera watching fiducials &mdash; measures how much a compliant structure
+            deforms. That structure sets the range and the sensitivity, and it also contributes creep,
+            hysteresis and drift with temperature, terms that are rarely quantified in published
+            characterizations. LC 3-Axis removes the custom structure entirely: four off-the-shelf load
+            cells carry the entire load path, so the creep, hysteresis and temperature compensation that
+            dominate the error budget of a low-cost force sensor are inherited from a mass-produced part
+            instead of being introduced by one we would have to characterize ourselves. A single fitted
+            matrix absorbs placement error, cell-to-cell gain variation, wiring polarity and cross-coupling,
+            so nothing in the build has to be made accurately &mdash; only repeatably. The result is
+            millinewton resolution across a 0&ndash;4.9&nbsp;N calibrated range on every axis, for a
+            $116.55 bill of materials, validated against a commercial reference sensor over 344,424
+            in-contact samples and demonstrated in closed-loop admittance hand-guiding on a UR5e.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <p><b>L. Feng, A. Slepyan, K. Murthy and N. Thakor.</b> <i>An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element.</i> IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation.</p>
-    <p>Every number quoted here is traced to a source file in the repository. MIT licensed &middot; <a href="https://github.com/lucasfeng7/lc-3-axis">github.com/lucasfeng7/lc-3-axis</a></p>
+<section class="section is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <figure class="image"><img src="docs/img/exploded.png" alt="Exploded view of the sensor assembly"></figure>
+        <p class="has-text-centered has-text-grey">Exploded view &mdash; tip and microcontroller omitted</p>
+      </div>
+      <div class="column">
+        <figure class="image"><img src="docs/img/internals.jpg" alt="The four load cells between the plates"></figure>
+        <p class="has-text-centered has-text-grey">The four cells forming the structure, with converters and the I&sup2;C multiplexer visible</p>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths content has-text-justified">
+        <p>
+          Here there is no compliant structure to characterize. Four commercial load cells are both the
+          beams and the transducers, so the load path runs through parts whose beam geometry, gauge
+          placement and bridge compensation were set at the factory. Creep and temperature behavior come
+          from a datasheet rather than from a part built in-house &mdash; you look them up instead of
+          discovering them mid-experiment.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bom">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">LC 3-Axis, In Detail</h2>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light">
+          <h3 class="title is-4">Hardware &amp; Bill of Materials</h3>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <p>Seventeen part types. Three are printed, and there is no custom PCB, no machining and no cast or
+        molded elastomer.</p>
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped">
+          <thead><tr><th>Qty</th><th>Part</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>4</td><td>TAL221 500&nbsp;g bar load cell</td><td>the structure and the transducer, both</td></tr>
+            <tr><td>4</td><td>NAU7802 24-bit ADC breakout</td><td>one per cell, I&sup2;C address <code>0x2A</code></td></tr>
+            <tr><td>1</td><td>TCA9548A I&sup2;C multiplexer</td><td>address <code>0x70</code>, A2:A0 to GND</td></tr>
+            <tr><td>1</td><td>Teensy 4.0</td><td>reads the cells, applies the matrix, streams CSV</td></tr>
+          </tbody>
+        </table>
+        <table class="table is-fullwidth is-striped">
+          <thead><tr><th>Printed part</th><th>Process</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Upper plate</td><td>FDM, PLA</td><td>carries the tip &mdash; see <a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a> / <a href="cad/Top%20Plate%20Smaller.SLDPRT">Top Plate Smaller.SLDPRT</a></td></tr>
+            <tr><td>Lower plate</td><td>FDM, PLA</td><td>bolts to the robot flange</td></tr>
+            <tr><td>Interchangeable tip</td><td>FDM, PLA</td><td>sets contact height <code>h</code>, 38.6&nbsp;mm here &mdash; see <a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Total <b>$116.55</b> for the electromechanical parts above. Fasteners, cabling and filament are excluded.</p>
+    </div>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light" id="performance">
+          <h3 class="title is-4">Measured Performance</h3>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <p>Calibrated range is 0 to 4.9&nbsp;N on every axis. Figures below are leave-one-out: each
+        calibration point is predicted by a fit made without it. In-sample residuals are 2.2 times smaller
+        &mdash; the conservative number is the one quoted.</p>
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped">
+          <thead><tr><th></th>
+            <th><span class="ax" style="background:var(--fx)"></span>F<sub>x</sub></th>
+            <th><span class="ax" style="background:var(--fy)"></span>F<sub>y</sub></th>
+            <th><span class="ax" style="background:var(--fz)"></span>F<sub>z</sub></th></tr></thead>
+          <tbody>
+            <tr><td>Leave-one-out error (N)</td><td>0.0431</td><td>0.0330</td><td>0.0357</td></tr>
+            <tr><td>Noise floor, 1&sigma; (mN)</td><td>3.2</td><td>3.5</td><td>2.6</td></tr>
+            <tr><td>On-axis decoupling (%)</td><td>100.1</td><td>99.7</td><td>99.6</td></tr>
+            <tr><td>Hysteresis (% of span)</td><td>0.111</td><td>0.421</td><td>1.112</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Off-axis leakage stays below 1&nbsp;%. Three overloads of 19.9 to 28.7&nbsp;N against a 19.6&nbsp;N
+        rated limit each returned to zero within 0.05&nbsp;N, so range is a purchasing decision rather than
+        a redesign. Each converter runs at 320&nbsp;SPS, so the four interleaved give roughly 1200 samples
+        per second in aggregate. A frame carrying fresh data from all four cells is emitted at 212&nbsp;Hz.</p>
+    </div>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light">
+          <h3 class="title is-4">Against a Commercial Reference</h3>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-centered is-vcentered">
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/agreement.png" alt="Response against the OptoForce reference"></figure>
+      </div>
+      <div class="column is-half content has-text-justified">
+        <p>Both instruments in series on a UR5e so each carries the same contact force, over 344,424
+          in-contact samples.</p>
+        <div class="table-container">
+          <table class="table is-fullwidth is-striped is-tight">
+            <thead><tr><th>Axis</th><th>Scale factor</th><th>r&sup2;</th><th>Residual about the fit</th></tr></thead>
+            <tbody>
+              <tr><td>F<sub>z</sub></td><td>0.953</td><td>0.998</td><td>0.0480&nbsp;N &middot; 0.98&nbsp;% of range</td></tr>
+              <tr><td>F<sub>x</sub></td><td>0.865</td><td>0.993</td><td>0.1137&nbsp;N &middot; 2.32&nbsp;% of range</td></tr>
+              <tr><td>F<sub>y</sub></td><td>0.873</td><td>0.993</td><td>0.1211&nbsp;N &middot; 2.47&nbsp;% of range</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="content has-text-justified">
+      <p>Tracking is close. Absolute scale is not. What separates the two instruments is a fixed scale
+        factor, not scatter and not a bend in the response, so a controller absorbs it in its gain without
+        losing resolution or repeatability. The likely cause is that the arm was moved by hand during the
+        comparison, which varies the contact height and therefore the lever arm.</p>
+      <p class="has-text-grey">The two frames were aligned with an orthogonal transform, not a general
+        3&times;3 fit. A general fit would have recalibrated the sensor against the reference and then
+        reported the agreement it had just produced.</p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/calib-deadweight.jpg" alt="Deadweight calibration at the bench edge"></figure>
+      </div>
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/calib-optoforce.jpg" alt="The two instruments in series on the UR5e"></figure>
+      </div>
+    </div>
+    <p class="has-text-centered has-text-grey">Calibration is anchored to known masses, not transferred from
+      another sensor. Left, the sensor clamped axis-horizontal with masses hanging from the tip. Right, the
+      comparison rig.</p>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light">
+          <h3 class="title is-4">Closing the Loop on a Robot</h3>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-centered is-vcentered">
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/handguide.png" alt="Four instants from an admittance hand-guiding run"></figure>
+      </div>
+      <div class="column is-half content has-text-justified">
+        <p>Force in, Cartesian velocity out. The operator pushes the tool and the arm follows, at
+          199.8&nbsp;Hz. Single-axis pushes and simultaneous loading of all three axes are resolved alike,
+          confirming the sensor is fast and accurate enough on a moving robot rather than only on a bench.
+          Mounting on the arm raises the noise floor three to four times above the bench.</p>
+        <a href="media/handguiding.mp4" class="button is-link is-light is-small is-rounded">
+          <span class="icon"><i class="fas fa-play"></i></span>
+          <span>Full video (44&nbsp;s)</span>
+        </a>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light">
+          <h3 class="title is-4">How It Works</h3>
+        </div>
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column content has-text-justified">
+        <p>Four vertical cells sense exactly three things: <code>Fz</code>, <code>Mx</code> and
+          <code>My</code>. A lateral force is recovered from the moment it makes about the plane of the
+          cells. For a contact at <code>(xc, yc)</code> and height <code>h</code> above that plane,</p>
+        <pre><code>My = -Fx&middot;h + Fz&middot;xc
+Mx =  Fy&middot;h - Fz&middot;yc</code></pre>
+        <p>so the contact point has to be known. That suits a probe with fixed tip geometry rather than a
+          general-purpose contact plate.</p>
+      </div>
+      <div class="column content has-text-justified">
+        <p>A single 3&times;4 matrix with bias maps four tared cell counts to <code>(Fx, Fy, Fz)</code>.
+          Firmware discovers which multiplexer channel each converter answers on at boot, so physical cell
+          order does not matter, and it refuses to load a calibration whose channel map does not match the
+          hardware present.</p>
+        <p>Four cells give four readings, but an external load can only produce three independent patterns
+          among them. The fourth is a self-stress mode that no external force can excite, and nothing in
+          calibration touches it. Ridge regularization holds its weight near zero rather than letting cell
+          noise be amplified through it.</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light" id="limitations">
+          <h3 class="title is-4">Known Limitations</h3>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <p>Stating these is the point of the project, so they are not buried.</p>
+      <ul class="lim-list">
+        <li><b>The lateral scale factor of about 0.87 is not attributed.</b> It is a fixed gain, so it folds
+          into a controller gain, but it is unexplained. The likely cause is that the arm was moved by hand
+          during the comparison, which varies the contact height and so the lever arm; the absolute tip
+          height was never measured.</li>
+        <li><b>The stack has no preload.</b> Under lateral load the printed plates lift slightly rather than
+          sharing load linearly, giving a 15 to 20&nbsp;% difference between loading and unloading. The fix
+          is mechanical and has been identified. Applying it would invalidate the calibration behind the
+          comparison above, so it is deferred.</li>
+        <li><b>Three axes only, and only for a known contact point.</b> This is a probe, not a plate.</li>
+        <li><b>The F<sub>z</sub> gain has not reproduced between sessions</b>, 1.052 on one day against
+          0.953 on another, so 9&nbsp;% is the current reproducibility limit of the comparison rather than
+          1&nbsp;%.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light" id="cad">
+          <h3 class="title is-4">CAD &amp; Firmware</h3>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <p>SolidWorks source files for the printed parts are in <a href="https://github.com/lucasfeng7/lc-3-axis/tree/master/cad">/cad</a>:</p>
+      <ul>
+        <li><a href="cad/LC%203-Axis.SLDASM">LC 3-Axis.SLDASM</a> &mdash; the top-level assembly</li>
+        <li><a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a> and <a href="cad/Top%20Plate%20Smaller.SLDPRT">Top Plate Smaller.SLDPRT</a> &mdash; upper plate variants</li>
+        <li><a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a> &mdash; the interchangeable tip used for calibration, <code>h</code> = 38.6&nbsp;mm</li>
+      </ul>
+      <p><a href="firmware/lc_3_axis.ino"><code>firmware/lc_3_axis.ino</code></a> runs on the Teensy 4.0. It
+        discovers the multiplexer channels at boot, stores the calibration matrix and the discovered channel
+        map together in EEPROM, and refuses to load a calibration whose map does not match the hardware
+        present.</p>
+      <pre><code>0.0142,-0.0031,1.9847</code></pre>
+      <table class="table is-narrow">
+        <tbody>
+          <tr><td><code>t</code></td><td>re-tare, since zero drifts with temperature and the matrix does not</td></tr>
+          <tr><td><code>r</code></td><td>stream F<sub>x</sub>, F<sub>y</sub>, F<sub>z</sub></td></tr>
+          <tr><td><code>p</code></td><td>pause</td></tr>
+          <tr><td><code>d</code></td><td>also show the four raw cell counts</td></tr>
+          <tr><td><code>u</code></td><td>switch newtons and gram-force</td></tr>
+        </tbody>
+      </table>
+      <p class="has-text-grey">Lines beginning <code>#</code> are messages rather than data, so filter them
+        when parsing.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Team &amp; Contact</h2>
+    <div class="columns is-centered is-multiline">
+      <div class="column is-one-quarter has-text-centered">
+        <p class="title is-5">Lucas Feng</p>
+        <p><a href="mailto:lfeng22@jhu.edu">lfeng22@jhu.edu</a></p>
+      </div>
+      <div class="column is-one-quarter has-text-centered">
+        <p class="title is-5">Ariel Slepyan</p>
+        <p><a href="mailto:aslepya1@jhu.edu">aslepya1@jhu.edu</a></p>
+      </div>
+      <div class="column is-one-quarter has-text-centered">
+        <p class="title is-5">Krishna Murthy</p>
+        <p><a href="mailto:kmj@jhu.edu">kmj@jhu.edu</a></p>
+      </div>
+      <div class="column is-one-quarter has-text-centered">
+        <p class="title is-5">Nitish Thakor</p>
+        <p><a href="mailto:nitish@jhu.edu">nitish@jhu.edu</a></p>
+      </div>
+    </div>
+    <div class="content has-text-centered mt-5">
+      <p>Every number quoted on this page is traced to a source file in the
+        <a href="https://github.com/lucasfeng7/lc-3-axis">repository</a>. Nothing is quoted that was not
+        measured.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bibtex">
+  <div class="container is-max-desktop content">
+    <h2 class="title has-text-centered">Citation</h2>
+    <pre><code>@inproceedings{feng2026lc3axis,
+  title     = {An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element},
+  author    = {Feng, Lucas and Slepyan, Ariel and Murthy, Krishna and Thakor, Nitish},
+  booktitle = {IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Released under the <a href="LICENSE">MIT License</a>.
+          </p>
+          <p>
+            Page design adapted from the <a href="https://coin-ft.github.io/">CoinFT</a> project page,
+            whose template was in turn modified from <a href="https://nerfies.github.io/">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
 
