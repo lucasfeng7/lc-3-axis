@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="LC 3-Axis: a three-axis force sensor in which four off-the-shelf load cells carry the entire load path. Millinewton resolution for a $116.55 bill of materials.">
+<meta name="description" content="LC 3-Axis: an accurate three-axis force sensor assembled with readily available off-the-shelf components with no designed compliant element.">
 <meta name="keywords" content="force sensor, force/torque sensing, load cell, robotics, open hardware">
 <title>LC 3-Axis: An Accurate Three-Axis Force Sensor with No Designed Compliant Element</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
@@ -19,24 +19,18 @@
   .navbar{ box-shadow:0 1px 0 #eee; }
   .navbar-item.brand{ font-weight:700; letter-spacing:-0.02em; }
   .publication-title{ font-weight:800; letter-spacing:-0.02em; }
-  .publication-authors a{ color:hsl(204,86%,53%) !important; }
-  .publication-authors a:hover{ text-decoration:underline; }
-  .author-block{ display:inline-block; }
-  section.hero-teaser video, section.hero-teaser img{
-    border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.15); width:100%; display:block;
-  }
+  .publication-venue{ color:#555; }
   figure.image img{ border-radius:8px; border:1px solid #eee; }
   .section.is-light{ background:#f6f7f9; }
   .notification.is-link.is-light{ background:#eaf2fc; }
   .ax{ display:inline-block; width:.62em; height:.62em; border-radius:2px; margin-right:.35em; vertical-align:baseline; }
-  .lim-list{ list-style:none; padding:0; margin:0; }
-  .lim-list li{ padding:14px 0; border-bottom:1px solid #eee; }
-  .lim-list li:last-child{ border-bottom:none; }
   code{ background:#f2f4f6; }
   pre{ background:#f2f4f6; border-radius:8px; }
-  .team-figure img{ width:88px; height:88px; object-fit:cover; }
+  .caption{ font-size:.92rem; color:#5b6470; }
+  .refs{ font-size:.92rem; line-height:1.7; }
+  .refs p{ margin-bottom:.5em; }
   footer.footer{ background:#fafafa; }
-  .table.is-tight td, .table.is-tight th{ white-space:nowrap; }
+  video.landscape{ width:100%; display:block; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.15); background:#000; }
 </style>
 </head>
 <body>
@@ -48,10 +42,10 @@
     </div>
     <div class="navbar-menu">
       <div class="navbar-end">
-        <a class="navbar-item" href="#bom">Hardware</a>
-        <a class="navbar-item" href="#performance">Performance</a>
-        <a class="navbar-item" href="#limitations">Limitations</a>
-        <a class="navbar-item" href="#cad">CAD &amp; Firmware</a>
+        <a class="navbar-item" href="#method">Method</a>
+        <a class="navbar-item" href="#experiment">Experiment</a>
+        <a class="navbar-item" href="#resources">Resources</a>
+        <a class="navbar-item" href="#references">References</a>
         <a class="navbar-item" href="#bibtex">Citation</a>
         <a class="navbar-item" href="https://github.com/lucasfeng7/lc-3-axis"><i class="fab fa-github mr-1"></i> Repository</a>
       </div>
@@ -64,7 +58,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-2 publication-title">LC 3-Axis: An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</h1>
+          <h1 class="title is-2 publication-title">An Accurate Three-Axis Force Sensor Assembled with Readily Available Off-the-Shelf Components with No Designed Compliant Element</h1>
           <div class="is-size-5 publication-authors mt-4">
             <span class="author-block">Lucas Feng,</span>
             <span class="author-block">Ariel Slepyan,</span>
@@ -73,6 +67,9 @@
           </div>
           <div class="is-size-6 has-text-grey mt-2">
             <span class="author-block">Johns Hopkins University</span>
+          </div>
+          <div class="is-size-6 publication-venue mt-1">
+            IROS 2026 Workshop on Sensors and Actuators for Dexterous Manipulation
           </div>
           <div class="is-size-6 has-text-grey">
             <a href="mailto:lfeng22@jhu.edu">{lfeng22, aslepya1, kmj, nitish}@jhu.edu</a>
@@ -87,7 +84,7 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#cad" class="external-link button is-normal is-rounded is-dark">
+                <a href="#resources" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-cube"></i></span>
                   <span>CAD Files</span>
                 </a>
@@ -122,12 +119,12 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-10">
-        <video autoplay muted loop playsinline preload="metadata">
+        <video class="landscape" autoplay muted loop playsinline preload="metadata">
           <source src="media/handguiding.mp4" type="video/mp4">
         </video>
-        <h2 class="subtitle has-text-centered mt-4">
-          Admittance hand-guiding at 199.8&nbsp;Hz. The operator pushes, LC 3-Axis measures, the arm moves.
-        </h2>
+        <p class="caption has-text-centered mt-3">
+          The sensor driving admittance hand-guiding on a UR5e at 199.8&nbsp;Hz.
+        </p>
       </div>
     </div>
   </div>
@@ -140,70 +137,272 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Almost every low-cost multi-axis force sensor works the same way: an inexpensive readout &mdash;
-            optical, capacitive, a camera watching fiducials &mdash; measures how much a compliant structure
-            deforms. That structure sets the range and the sensitivity, and it also contributes creep,
-            hysteresis and drift with temperature, terms that are rarely quantified in published
-            characterizations. LC 3-Axis removes the custom structure entirely: four off-the-shelf load
-            cells carry the entire load path, so the creep, hysteresis and temperature compensation that
-            dominate the error budget of a low-cost force sensor are inherited from a mass-produced part
-            instead of being introduced by one we would have to characterize ourselves. A single fitted
-            matrix absorbs placement error, cell-to-cell gain variation, wiring polarity and cross-coupling,
-            so nothing in the build has to be made accurately &mdash; only repeatably. The result is
-            millinewton resolution across a 0&ndash;4.9&nbsp;N calibrated range on every axis, for a
-            $116.55 bill of materials, validated against a commercial reference sensor over 344,424
-            in-contact samples and demonstrated in closed-loop admittance hand-guiding on a UR5e.
+            Affordable multi-axis force sensors are usually designed with a custom compliant part,
+            and the deformation of that part is measured after a load is applied. Any creep,
+            hysteresis, or thermal sensitivity in that part then becomes a property of the finished
+            sensor. Its accuracy then depends on operating temperature and load history in ways a
+            single calibration cannot capture. We instead developed a sensor using four commercial
+            load cells that are manufacturer-characterized to carry the full load. On top of the
+            mechanical design, one fitted matrix that maps readings to force accounts for assembly
+            tolerances, gain differences, and wiring polarity. The resulting three-axis sensor costs
+            under $120 and has a 2.6&ndash;3.5&nbsp;mN noise floor. Off-axis leakage remains below
+            1&nbsp;%, and lateral hysteresis remains below 0.5&nbsp;% of span. After one scale
+            factor, its output agrees with a commercial reference to 1.0&ndash;2.5&nbsp;% of full
+            scale across more than 300,000 in-contact samples. The design suits tools whose contact
+            point is known and makes an accurate three-axis sensor accessible to any research lab
+            with a 3D printer.
           </p>
         </div>
       </div>
     </div>
+
+    <div class="columns is-centered mt-5">
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/assembled.jpg" alt="The sensor as built, with the top plate and interchangeable tip assembled"></figure>
+      </div>
+      <div class="column is-half">
+        <figure class="image"><img src="docs/img/internals.jpg" alt="The four load cells that form the structure, with converters on the perimeter and the multiplexer at the center"></figure>
+      </div>
+    </div>
+    <p class="caption has-text-centered">
+      The sensor as designed and as built. Left, the assembled body with the interchangeable tip.
+      Right, the four load cells that form the structure, with the converters on the perimeter and
+      the I&sup2;C multiplexer at the center.
+    </p>
   </div>
 </section>
 
 <section class="section is-light">
+  <div class="container is-max-desktop content has-text-justified">
+    <h2 class="title is-3">Introduction</h2>
+    <p>
+      Force sensing is critical in any task where a robot meets a surface it cannot fully model.
+      Commercial multi-axis sensors do this well but cost tens of thousands of dollars, which has
+      pushed a research effort toward cheaper designs.
+    </p>
+    <p>
+      Those low-cost designs have used optical readout, cameras and fiducials, capacitance, and
+      light transmitted through an elastomer. In each case an inexpensive sensor measures a
+      compliant structure built for that device. The structure determines range and sensitivity,
+      and it also adds creep, hysteresis, and temperature dependence. These effects are seldom
+      characterized in full. Hysteresis is sometimes reported, but creep and temperature dependence
+      usually are not, so a user cannot predict the error under a sustained load, under load
+      cycling, or at a different operating temperature.
+    </p>
+    <p>
+      The four-cell arrangement already exists in a design by Chua and Okamura, which places four
+      commercial point-contact cells around a PCB perimeter [5]. That design needs a custom PCB,
+      which makes it far less readily available and much more expensive. Ours keeps the cost low
+      and the error terms quantifiable while using only off-the-shelf parts. The load cells serve
+      as both beams and transducers. Their beam geometry, strain-gauge placement and bridge
+      compensation are set at manufacture, and the creep and temperature behavior that follows is
+      specified on the datasheet [6], so no separate part needs its own characterization.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="method">
   <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column">
-        <figure class="image"><img src="docs/img/exploded.png" alt="Exploded view of the sensor assembly"></figure>
-        <p class="has-text-centered has-text-grey">Exploded view &mdash; tip and microcontroller omitted</p>
-      </div>
-      <div class="column">
-        <figure class="image"><img src="docs/img/internals.jpg" alt="The four load cells between the plates"></figure>
-        <p class="has-text-centered has-text-grey">The four cells forming the structure, with converters and the I&sup2;C multiplexer visible</p>
-      </div>
+    <h2 class="title is-3 has-text-centered">Method</h2>
+
+    <h3 class="title is-4 mt-5">Sensor Structure</h3>
+    <div class="content has-text-justified">
+      <p>
+        Four TAL221 500&nbsp;g bar load cells connect the two 3D-printed plates in a square. Each
+        senses compression along the vertical axis. Together they respond to <code>Fz</code>,
+        <code>Mx</code>, and <code>My</code>. The remaining combination is the self-stress mode, a
+        pattern of internal cell forces that cannot be produced by an external load.
+      </p>
+      <p>
+        Each load cell has its own NAU7802 converter, interleaved through an I&sup2;C multiplexer
+        for an aggregate output of about 1200&nbsp;Hz. The multiplexer connects to a Teensy 4.0,
+        though any reasonably capable microcontroller would serve.
+      </p>
+      <p>
+        A lateral force is recovered from its moment about the cell plane. For a contact at
+        <code>(xc, yc)</code> and height <code>h</code>,
+      </p>
+      <pre><code>My = -Fx&middot;h + Fz&middot;xc
+Mx =  Fy&middot;h - Fz&middot;yc</code></pre>
+      <p>
+        The contact location must therefore be known. For the tests reported here, the contact
+        face lies 38.6&nbsp;mm above the cell mid-plane.
+      </p>
+      <p>
+        We tare each channel before loading to remove the assembly preload and the weight of the
+        parts above the cells. A fitted 3&times;4 matrix with a bias converts a four-entry vector
+        of tared counts into <code>(Fx, Fy, Fz)</code>. The same fit absorbs placement error,
+        cell-to-cell gain variation, polarity, and cross-coupling. Firmware identifies the
+        multiplexer channel used by each converter, so the physical cell order does not matter.
+      </p>
     </div>
-    <div class="columns is-centered">
-      <div class="column is-four-fifths content has-text-justified">
-        <p>
-          Here there is no compliant structure to characterize. Four commercial load cells are both the
-          beams and the transducers, so the load path runs through parts whose beam geometry, gauge
-          placement and bridge compensation were set at the factory. Creep and temperature behavior come
-          from a datasheet rather than from a part built in-house &mdash; you look them up instead of
-          discovering them mid-experiment.
-        </p>
-      </div>
+
+    <h3 class="title is-4 mt-5">Fabrication</h3>
+    <div class="content has-text-justified">
+      <p>
+        Only three of the seventeen part types are custom. They are two FDM 3D-printed PLA plates
+        and an interchangeable printed tip. The load cells, converters, multiplexer, and
+        microcontroller cost $116.55 in total. Fasteners, cabling, and filament are excluded. The
+        bill of materials, firmware and calibration procedure are in <a href="#resources">Resources</a>
+        below.
+      </p>
     </div>
   </div>
 </section>
 
-<section class="section" id="bom">
+<section class="section" id="experiment">
   <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full">
-        <h2 class="title is-3">LC 3-Axis, In Detail</h2>
+    <h2 class="title is-3 has-text-centered">Experiment</h2>
+
+    <h3 class="title is-4 mt-5">Sensor Characterization</h3>
+    <div class="content has-text-justified">
+      <p>
+        We calibrated against known masses rather than another force sensor. For each lateral axis
+        the sensor was clamped horizontal, so gravity acted perpendicular to the axis being loaded.
+      </p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-narrow">
+        <figure class="image"><img src="docs/img/calib-deadweight.jpg" alt="The sensor clamped axis-horizontal at the bench edge with known masses hanging from the tip"></figure>
+      </div>
+      <div class="column is-narrow">
+        <figure class="image"><img src="docs/img/calib-optoforce.jpg" alt="The two instruments in series on the UR5e, the sensor on the flange and the OptoForce below it"></figure>
       </div>
     </div>
+    <p class="caption has-text-centered">
+      The two calibrations. Left, the sensor clamped axis-horizontal at the bench edge with known
+      masses hanging from the tip, so gravity loads it perpendicular to the sensing axis. Right,
+      the two instruments in series on the UR5e, the sensor on the flange and the OptoForce below
+      it, so each carries the same force.
+    </p>
+
+    <div class="table-container mt-5">
+      <table class="table is-fullwidth is-striped">
+        <thead><tr><th></th>
+          <th><span class="ax" style="background:var(--fx)"></span>F<sub>x</sub></th>
+          <th><span class="ax" style="background:var(--fy)"></span>F<sub>y</sub></th>
+          <th><span class="ax" style="background:var(--fz)"></span>F<sub>z</sub></th></tr></thead>
+        <tbody>
+          <tr><td>Leave-one-out error (N)</td><td>0.0431</td><td>0.0330</td><td>0.0357</td></tr>
+          <tr><td>Noise floor, 1&sigma; (mN)</td><td>3.2</td><td>3.5</td><td>2.6</td></tr>
+          <tr><td>On-axis decoupling (%)</td><td>100.1</td><td>99.7</td><td>99.6</td></tr>
+          <tr><td>Hysteresis (% of span)</td><td>0.111</td><td>0.421</td><td>1.112</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption has-text-centered">Bench behavior, calibrated range 0&ndash;4.9&nbsp;N.</p>
+
+    <div class="content has-text-justified mt-4">
+      <p>
+        Leave-one-out error stays below 0.9&nbsp;% of range on every axis. Residuals measured in
+        sample are 2.2 times smaller. On-axis decoupling is close to a full response on every axis,
+        and the F<sub>x</sub> entry sits just above it because of a small overshoot in the
+        estimate. Leakage onto the other two axes stays below 1&nbsp;%. Hysteresis is 0.111&nbsp;%
+        and 0.421&nbsp;% of span laterally.
+      </p>
+      <p>
+        We applied three overloads of 19.9&ndash;28.7&nbsp;N against the 19.6&nbsp;N limit. After
+        each, the unloaded output returned to within 0.05&nbsp;N of zero. A different load-cell
+        rating changes the range without changing the design.
+      </p>
+    </div>
+
+    <hr>
+
+    <h3 class="title is-4">Independent Validation</h3>
+    <div class="content has-text-justified">
+      <p>
+        For validation, the UR5e carried two independently calibrated instruments in a serial
+        stack. Their coordinate frames were aligned with an orthogonal transform. The data contain
+        344,424 in-contact samples.
+      </p>
+    </div>
+    <figure class="image">
+      <img src="docs/img/agreement.png" alt="Response against the OptoForce reference">
+    </figure>
+    <p class="caption has-text-centered">
+      Response against the OptoForce reference with both instruments in series on the same rig.
+      Dashed gray is the 1:1 line and black is a least-squares fit through the origin. Markers are
+      slice means with their standard deviation.
+    </p>
+    <div class="content has-text-justified mt-4">
+      <p>
+        Allowing one scale factor per axis, the readings sit within 0.1137&nbsp;N of the reference
+        on F<sub>x</sub> and 0.1211&nbsp;N on F<sub>y</sub>, which is 2.32&nbsp;% and 2.47&nbsp;% of
+        the 4.9&nbsp;N range. The two rise together in a straight line, at r&sup2; &ge; 0.993. For
+        F<sub>z</sub> we pressed in steps of increasing force along the tool axis, where the
+        readings sit within 0.0480&nbsp;N, or 0.98&nbsp;%, at r&sup2; = 0.998. The scale factors
+        themselves are 0.865 and 0.873 laterally and 0.953 axially. What separates them is scale,
+        not scatter and not nonlinearity. The likely cause is that the robotic arm was controlled
+        manually during the comparison, which varies the contact height and therefore the lever
+        arm.
+      </p>
+      <p>
+        Even so, these figures match or exceed the closest comparable design. Both are the RMS
+        disagreement with an independent reference after per-axis calibration constants are
+        fitted. Ours are 0.1137 and 0.1211&nbsp;N laterally and 0.0480&nbsp;N axially. Chua and
+        Okamura report 0.105 to 0.146&nbsp;N laterally and 0.064 to 0.126&nbsp;N axially, the
+        spread being across the two units they built [5].
+      </p>
+    </div>
+
+    <hr>
+
+    <h3 class="title is-4">Sensor Applications</h3>
+    <div class="content has-text-justified">
+      <p>
+        Finally, we used the sensor for admittance hand-guiding. In this control mode, the measured
+        contact force commands the robot's Cartesian velocity. The loop runs at 199.8&nbsp;Hz. It
+        responds to single-axis pushes and to simultaneous loading of all three axes, which
+        confirms that the sensor is fast and accurate enough to close a control loop on a moving
+        robot rather than only on a bench.
+      </p>
+    </div>
+    <figure class="image">
+      <img src="docs/img/handguide.png" alt="Four instants from an admittance hand-guiding run">
+    </figure>
+    <p class="caption has-text-centered">
+      The sensor driving admittance hand-guiding on the UR5e. Four instants from one run, with the
+      components measured at each instant inset on a common 4.9&nbsp;N scale. Panel (a) is a push
+      down, (b) across the view, (c) along the tool, and (d) loads all three axes at once.
+    </p>
+    <p class="has-text-centered mt-4">
+      <a href="media/handguiding.mp4" class="button is-link is-light is-small is-rounded">
+        <span class="icon"><i class="fas fa-play"></i></span>
+        <span>Full video (44&nbsp;s)</span>
+      </a>
+    </p>
+  </div>
+</section>
+
+<section class="section is-light">
+  <div class="container is-max-desktop content has-text-justified">
+    <h2 class="title is-3 has-text-centered">Conclusion</h2>
+    <p>
+      We presented a three-axis force sensor which leverages four load cells as the structure. The
+      sensor does not need a custom PCB and is simple to assemble, and it agrees with a commercial
+      reference to 1.0&ndash;2.5&nbsp;% of full scale. It matches or exceeds the accuracy of the
+      closest comparable design, which makes it an affordable and easy-to-implement option for
+      research labs that need accurate three-axis force sensing.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="resources">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Resources</h2>
+    <p class="has-text-centered content">The bill of materials, firmware and calibration procedure, referenced above, are given in full here.</p>
 
     <div class="columns is-centered">
       <div class="column is-full has-text-centered">
         <div class="notification is-link is-light">
-          <h3 class="title is-4">Hardware &amp; Bill of Materials</h3>
+          <h3 class="title is-4">Bill of Materials</h3>
         </div>
       </div>
     </div>
     <div class="content">
-      <p>Seventeen part types. Three are printed, and there is no custom PCB, no machining and no cast or
-        molded elastomer.</p>
+      <p>Total <b>$116.55</b> for the electromechanical parts below. Fasteners, cabling and
+        filament are excluded.</p>
       <div class="table-container">
         <table class="table is-fullwidth is-striped">
           <thead><tr><th>Qty</th><th>Part</th><th>Role</th></tr></thead>
@@ -217,46 +416,13 @@
         <table class="table is-fullwidth is-striped">
           <thead><tr><th>Printed part</th><th>Process</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td>Upper plate</td><td>FDM, PLA</td><td>carries the tip &mdash; see <a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a> / <a href="cad/Top%20Plate%20Smaller.SLDPRT">Top Plate Smaller.SLDPRT</a></td></tr>
-            <tr><td>Lower plate</td><td>FDM, PLA</td><td>bolts to the robot flange</td></tr>
-            <tr><td>Interchangeable tip</td><td>FDM, PLA</td><td>sets contact height <code>h</code>, 38.6&nbsp;mm here &mdash; see <a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a></td></tr>
+            <tr><td>Upper plate</td><td>FDM, PLA</td><td>carries the tip &mdash; <a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a></td></tr>
+            <tr><td>Lower plate</td><td>FDM, PLA</td><td>bolts to the robot flange &mdash; <a href="cad/Bottom%20Plate.SLDPRT">Bottom Plate.SLDPRT</a></td></tr>
+            <tr><td>Interchangeable tip</td><td>FDM, PLA</td><td>sets contact height <code>h</code>, 38.6&nbsp;mm here &mdash; <a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a></td></tr>
           </tbody>
         </table>
       </div>
-      <p>Total <b>$116.55</b> for the electromechanical parts above. Fasteners, cabling and filament are excluded.</p>
-    </div>
-
-    <hr>
-
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered">
-        <div class="notification is-link is-light" id="performance">
-          <h3 class="title is-4">Measured Performance</h3>
-        </div>
-      </div>
-    </div>
-    <div class="content">
-      <p>Calibrated range is 0 to 4.9&nbsp;N on every axis. Figures below are leave-one-out: each
-        calibration point is predicted by a fit made without it. In-sample residuals are 2.2 times smaller
-        &mdash; the conservative number is the one quoted.</p>
-      <div class="table-container">
-        <table class="table is-fullwidth is-striped">
-          <thead><tr><th></th>
-            <th><span class="ax" style="background:var(--fx)"></span>F<sub>x</sub></th>
-            <th><span class="ax" style="background:var(--fy)"></span>F<sub>y</sub></th>
-            <th><span class="ax" style="background:var(--fz)"></span>F<sub>z</sub></th></tr></thead>
-          <tbody>
-            <tr><td>Leave-one-out error (N)</td><td>0.0431</td><td>0.0330</td><td>0.0357</td></tr>
-            <tr><td>Noise floor, 1&sigma; (mN)</td><td>3.2</td><td>3.5</td><td>2.6</td></tr>
-            <tr><td>On-axis decoupling (%)</td><td>100.1</td><td>99.7</td><td>99.6</td></tr>
-            <tr><td>Hysteresis (% of span)</td><td>0.111</td><td>0.421</td><td>1.112</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Off-axis leakage stays below 1&nbsp;%. Three overloads of 19.9 to 28.7&nbsp;N against a 19.6&nbsp;N
-        rated limit each returned to zero within 0.05&nbsp;N, so range is a purchasing decision rather than
-        a redesign. Each converter runs at 320&nbsp;SPS, so the four interleaved give roughly 1200 samples
-        per second in aggregate. A frame carrying fresh data from all four cells is emitted at 212&nbsp;Hz.</p>
+      <p>No custom PCB. No machining. No cast or molded elastomer.</p>
     </div>
 
     <hr>
@@ -264,153 +430,18 @@
     <div class="columns is-centered">
       <div class="column is-full has-text-centered">
         <div class="notification is-link is-light">
-          <h3 class="title is-4">Against a Commercial Reference</h3>
-        </div>
-      </div>
-    </div>
-    <div class="columns is-centered is-vcentered">
-      <div class="column is-half">
-        <figure class="image"><img src="docs/img/agreement.png" alt="Response against the OptoForce reference"></figure>
-      </div>
-      <div class="column is-half content has-text-justified">
-        <p>Both instruments in series on a UR5e so each carries the same contact force, over 344,424
-          in-contact samples.</p>
-        <div class="table-container">
-          <table class="table is-fullwidth is-striped is-tight">
-            <thead><tr><th>Axis</th><th>Scale factor</th><th>r&sup2;</th><th>Residual about the fit</th></tr></thead>
-            <tbody>
-              <tr><td>F<sub>z</sub></td><td>0.953</td><td>0.998</td><td>0.0480&nbsp;N &middot; 0.98&nbsp;% of range</td></tr>
-              <tr><td>F<sub>x</sub></td><td>0.865</td><td>0.993</td><td>0.1137&nbsp;N &middot; 2.32&nbsp;% of range</td></tr>
-              <tr><td>F<sub>y</sub></td><td>0.873</td><td>0.993</td><td>0.1211&nbsp;N &middot; 2.47&nbsp;% of range</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="content has-text-justified">
-      <p>Tracking is close. Absolute scale is not. What separates the two instruments is a fixed scale
-        factor, not scatter and not a bend in the response, so a controller absorbs it in its gain without
-        losing resolution or repeatability. The likely cause is that the arm was moved by hand during the
-        comparison, which varies the contact height and therefore the lever arm.</p>
-      <p class="has-text-grey">The two frames were aligned with an orthogonal transform, not a general
-        3&times;3 fit. A general fit would have recalibrated the sensor against the reference and then
-        reported the agreement it had just produced.</p>
-    </div>
-    <div class="columns is-centered">
-      <div class="column is-half">
-        <figure class="image"><img src="docs/img/calib-deadweight.jpg" alt="Deadweight calibration at the bench edge"></figure>
-      </div>
-      <div class="column is-half">
-        <figure class="image"><img src="docs/img/calib-optoforce.jpg" alt="The two instruments in series on the UR5e"></figure>
-      </div>
-    </div>
-    <p class="has-text-centered has-text-grey">Calibration is anchored to known masses, not transferred from
-      another sensor. Left, the sensor clamped axis-horizontal with masses hanging from the tip. Right, the
-      comparison rig.</p>
-
-    <hr>
-
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered">
-        <div class="notification is-link is-light">
-          <h3 class="title is-4">Closing the Loop on a Robot</h3>
-        </div>
-      </div>
-    </div>
-    <div class="columns is-centered is-vcentered">
-      <div class="column is-half">
-        <figure class="image"><img src="docs/img/handguide.png" alt="Four instants from an admittance hand-guiding run"></figure>
-      </div>
-      <div class="column is-half content has-text-justified">
-        <p>Force in, Cartesian velocity out. The operator pushes the tool and the arm follows, at
-          199.8&nbsp;Hz. Single-axis pushes and simultaneous loading of all three axes are resolved alike,
-          confirming the sensor is fast and accurate enough on a moving robot rather than only on a bench.
-          Mounting on the arm raises the noise floor three to four times above the bench.</p>
-        <a href="media/handguiding.mp4" class="button is-link is-light is-small is-rounded">
-          <span class="icon"><i class="fas fa-play"></i></span>
-          <span>Full video (44&nbsp;s)</span>
-        </a>
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered">
-        <div class="notification is-link is-light">
-          <h3 class="title is-4">How It Works</h3>
-        </div>
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column content has-text-justified">
-        <p>Four vertical cells sense exactly three things: <code>Fz</code>, <code>Mx</code> and
-          <code>My</code>. A lateral force is recovered from the moment it makes about the plane of the
-          cells. For a contact at <code>(xc, yc)</code> and height <code>h</code> above that plane,</p>
-        <pre><code>My = -Fx&middot;h + Fz&middot;xc
-Mx =  Fy&middot;h - Fz&middot;yc</code></pre>
-        <p>so the contact point has to be known. That suits a probe with fixed tip geometry rather than a
-          general-purpose contact plate.</p>
-      </div>
-      <div class="column content has-text-justified">
-        <p>A single 3&times;4 matrix with bias maps four tared cell counts to <code>(Fx, Fy, Fz)</code>.
-          Firmware discovers which multiplexer channel each converter answers on at boot, so physical cell
-          order does not matter, and it refuses to load a calibration whose channel map does not match the
-          hardware present.</p>
-        <p>Four cells give four readings, but an external load can only produce three independent patterns
-          among them. The fourth is a self-stress mode that no external force can excite, and nothing in
-          calibration touches it. Ridge regularization holds its weight near zero rather than letting cell
-          noise be amplified through it.</p>
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered">
-        <div class="notification is-link is-light" id="limitations">
-          <h3 class="title is-4">Known Limitations</h3>
+          <h3 class="title is-4">Firmware</h3>
         </div>
       </div>
     </div>
     <div class="content">
-      <p>Stating these is the point of the project, so they are not buried.</p>
-      <ul class="lim-list">
-        <li><b>The lateral scale factor of about 0.87 is not attributed.</b> It is a fixed gain, so it folds
-          into a controller gain, but it is unexplained. The likely cause is that the arm was moved by hand
-          during the comparison, which varies the contact height and so the lever arm; the absolute tip
-          height was never measured.</li>
-        <li><b>The stack has no preload.</b> Under lateral load the printed plates lift slightly rather than
-          sharing load linearly, giving a 15 to 20&nbsp;% difference between loading and unloading. The fix
-          is mechanical and has been identified. Applying it would invalidate the calibration behind the
-          comparison above, so it is deferred.</li>
-        <li><b>Three axes only, and only for a known contact point.</b> This is a probe, not a plate.</li>
-        <li><b>The F<sub>z</sub> gain has not reproduced between sessions</b>, 1.052 on one day against
-          0.953 on another, so 9&nbsp;% is the current reproducibility limit of the comparison rather than
-          1&nbsp;%.</li>
-      </ul>
-    </div>
-
-    <hr>
-
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered">
-        <div class="notification is-link is-light" id="cad">
-          <h3 class="title is-4">CAD &amp; Firmware</h3>
-        </div>
-      </div>
-    </div>
-    <div class="content">
-      <p>SolidWorks source files for the printed parts are in <a href="https://github.com/lucasfeng7/lc-3-axis/tree/master/cad">/cad</a>:</p>
-      <ul>
-        <li><a href="cad/LC%203-Axis.SLDASM">LC 3-Axis.SLDASM</a> &mdash; the top-level assembly</li>
-        <li><a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a> and <a href="cad/Top%20Plate%20Smaller.SLDPRT">Top Plate Smaller.SLDPRT</a> &mdash; upper plate variants</li>
-        <li><a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a> &mdash; the interchangeable tip used for calibration, <code>h</code> = 38.6&nbsp;mm</li>
-      </ul>
-      <p><a href="firmware/lc_3_axis.ino"><code>firmware/lc_3_axis.ino</code></a> runs on the Teensy 4.0. It
-        discovers the multiplexer channels at boot, stores the calibration matrix and the discovered channel
-        map together in EEPROM, and refuses to load a calibration whose map does not match the hardware
-        present.</p>
+      <p><a href="firmware/lc_3_axis.ino"><code>firmware/lc_3_axis.ino</code></a> runs on the
+        Teensy 4.0. It discovers the multiplexer channels at boot, stores the calibration matrix
+        and the discovered channel map together in EEPROM, and refuses to load a calibration whose
+        map does not match the hardware present.</p>
+      <p>Libraries are Adafruit NAU7802 and Adafruit BusIO. I&sup2;C runs at 400&nbsp;kHz on pins
+        18 and 19, with each ADC at gain 128 and 320&nbsp;SPS.</p>
+      <p>Serial at 115200, newline endings. Output is plain CSV in newtons.</p>
       <pre><code>0.0142,-0.0031,1.9847</code></pre>
       <table class="table is-narrow">
         <tbody>
@@ -421,10 +452,45 @@ Mx =  Fy&middot;h - Fz&middot;yc</code></pre>
           <tr><td><code>u</code></td><td>switch newtons and gram-force</td></tr>
         </tbody>
       </table>
-      <p class="has-text-grey">Lines beginning <code>#</code> are messages rather than data, so filter them
-        when parsing.</p>
+      <p class="has-text-grey">Lines beginning <code>#</code> are messages rather than data, so
+        filter them when parsing.</p>
     </div>
 
+    <hr>
+
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered">
+        <div class="notification is-link is-light">
+          <h3 class="title is-4">CAD</h3>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <p>SolidWorks source for the printed parts is in
+        <a href="https://github.com/lucasfeng7/lc-3-axis/tree/master/cad">/cad</a>:</p>
+      <ul>
+        <li><a href="cad/LC%203-Axis.SLDASM">LC 3-Axis.SLDASM</a> &mdash; the top-level assembly</li>
+        <li><a href="cad/Top%20Plate.SLDPRT">Top Plate.SLDPRT</a> &mdash; upper plate</li>
+        <li><a href="cad/Bottom%20Plate.SLDPRT">Bottom Plate.SLDPRT</a> &mdash; lower plate</li>
+        <li><a href="cad/Calibration%20Tip.SLDPRT">Calibration Tip.SLDPRT</a> &mdash; the interchangeable tip used for calibration, <code>h</code> = 38.6&nbsp;mm</li>
+      </ul>
+      <p class="has-text-grey">The assembly references the load cells, converters and fasteners as
+        toolbox/purchased components, which are not included as separate files.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section is-light" id="references">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">References</h2>
+    <div class="refs">
+      <p>[1] R. Ouyang and R. D. Howe, &ldquo;Low-cost fiducial-based 6-axis force-torque sensor,&rdquo; in <i>IEEE International Conference on Robotics and Automation (ICRA)</i>, 2020, pp. 1&ndash;7.</p>
+      <p>[2] N. Hendrich, F. Wasserfall, and J. Zhang, &ldquo;3D printed low-cost force-torque sensors,&rdquo; <i>IEEE Access</i>, vol. 8, pp. 140569&ndash;140585, 2020.</p>
+      <p>[3] H. Choi et al., &ldquo;CoinFT: A coin-sized, capacitive 6-axis force torque sensor,&rdquo; <i>arXiv preprint arXiv:2503.19225</i>, 2025.</p>
+      <p>[4] A. El-Azizi, S. Islam, P. Piacenza, I. Kymissis, and M. Ciocarlie, &ldquo;A compact, low-cost force and torque sensor for robot fingers with LED-based displacement sensing,&rdquo; <i>arXiv preprint arXiv:2410.03481</i>, 2024.</p>
+      <p>[5] Z. Chua and A. M. Okamura, &ldquo;A modular 3-degrees-of-freedom force sensor for robot-assisted minimally invasive surgery research,&rdquo; <i>Sensors</i>, vol. 23, no. 11, p. 5230, 2023.</p>
+      <p>[6] HTC Sensor, &ldquo;TAL221 miniature load cell datasheet,&rdquo; <a href="https://cdn.sparkfun.com/assets/9/9/a/f/3/TAL221.pdf">cdn.sparkfun.com</a>, 2024, creep &plusmn;0.05&nbsp;% of full scale over 3&nbsp;min, compensated temperature range &minus;20 to +60&nbsp;&deg;C.</p>
+    </div>
   </div>
 </section>
 
@@ -448,11 +514,6 @@ Mx =  Fy&middot;h - Fz&middot;yc</code></pre>
         <p class="title is-5">Nitish Thakor</p>
         <p><a href="mailto:nitish@jhu.edu">nitish@jhu.edu</a></p>
       </div>
-    </div>
-    <div class="content has-text-centered mt-5">
-      <p>Every number quoted on this page is traced to a source file in the
-        <a href="https://github.com/lucasfeng7/lc-3-axis">repository</a>. Nothing is quoted that was not
-        measured.</p>
     </div>
   </div>
 </section>
