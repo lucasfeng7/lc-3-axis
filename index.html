@@ -20,16 +20,14 @@
   .publication-title{ font-weight:800; letter-spacing:-0.02em; }
   .publication-venue{ color:#555; }
 
-  /* uniform section rhythm: every section after the first gets the same top rule */
-  section.section{ padding:56px 0; }
-  section.section + section.section{ border-top:1px solid #e8e8e8; }
+  section.section.is-light{ background:#f5f5f5; }
 
   /* square corners everywhere, per request */
   figure.image img, video{ border-radius:0 !important; }
   figure.image img{ border:1px solid #eee; display:block; }
   video.landscape{ width:100%; display:block; background:#000; border:1px solid #eee; }
 
-  footer.footer{ background:#fafafa; border-top:1px solid #e8e8e8; }
+  footer.footer{ background:#fafafa; }
 </style>
 </head>
 <body>
@@ -129,7 +127,7 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section is-light">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
@@ -164,7 +162,7 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section is-light">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
