@@ -115,6 +115,8 @@ to the axis being loaded.
 </p>
 <p align="center"><sub>The two calibrations. Left, the sensor clamped axis-horizontal at the bench edge with known masses hanging from the tip, so gravity loads it perpendicular to the sensing axis. Right, the two instruments in series on the UR5e, the sensor on the flange and the OptoForce below it, so each carries the same force.</sub></p>
 
+<div align="center">
+
 | | Fx | Fy | Fz |
 |---|---|---|---|
 | Leave-one-out error (N) | 0.0431 | 0.0330 | 0.0357 |
@@ -122,7 +124,9 @@ to the axis being loaded.
 | On-axis decoupling (%) | 100.1 | 99.7 | 99.6 |
 | Hysteresis (% of span) | 0.111 | 0.421 | 1.112 |
 
-<p align="center"><sub>Bench behavior, calibrated range 0&ndash;4.9 N.</sub></p>
+<sub>Bench behavior, calibrated range 0&ndash;4.9 N.</sub>
+
+</div>
 
 Leave-one-out error stays below 0.9 % of range on every axis. Residuals
 measured in sample are 2.2 times smaller. On-axis decoupling is close to a
