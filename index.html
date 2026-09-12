@@ -6,7 +6,7 @@
 <meta name="description" content="LC 3-Axis: an accurate three-axis force sensor assembled with readily available off-the-shelf components with no designed compliant element.">
 <meta name="keywords" content="force sensor, force/torque sensing, load cell, robotics, open hardware">
 <title>LC 3-Axis: An Accurate Three-Axis Force Sensor with No Designed Compliant Element</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><line x1='50' y1='55' x2='50' y2='12' stroke='rgb(27,175,122)' stroke-width='9' stroke-linecap='round'/><line x1='50' y1='55' x2='88' y2='75' stroke='rgb(42,120,214)' stroke-width='9' stroke-linecap='round'/><line x1='50' y1='55' x2='14' y2='75' stroke='rgb(235,104,52)' stroke-width='9' stroke-linecap='round'/><circle cx='50' cy='12' r='7' fill='rgb(27,175,122)'/><circle cx='88' cy='75' r='7' fill='rgb(42,120,214)'/><circle cx='14' cy='75' r='7' fill='rgb(235,104,52)'/><circle cx='50' cy='55' r='10' fill='rgb(16,20,26)'/></svg>">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
@@ -16,7 +16,8 @@
   body{ font-family:'Noto Sans', sans-serif; }
   h1, h2, .publication-title, .publication-authors, .navbar-item{ font-family:'Inter', sans-serif; }
   .navbar{ box-shadow:0 1px 0 #eee; }
-  .navbar-item.brand{ font-weight:700; letter-spacing:-0.02em; }
+  .navbar-item.brand{ font-weight:700; letter-spacing:-0.02em; display:flex; align-items:center; gap:.5em; }
+  .navbar-item.brand svg{ display:block; }
   .publication-title{ font-weight:800; letter-spacing:-0.02em; }
   .publication-venue{ color:#555; }
 
@@ -36,7 +37,18 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="container is-max-desktop">
     <div class="navbar-brand">
-      <a class="navbar-item brand" href="#">⚖️ LC 3-Axis</a>
+      <a class="navbar-item brand" href="#">
+        <svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <line x1="50" y1="55" x2="50" y2="12" stroke="#1baf7a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="50" y1="55" x2="88" y2="75" stroke="#2a78d6" stroke-width="9" stroke-linecap="round"/>
+          <line x1="50" y1="55" x2="14" y2="75" stroke="#eb6834" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="50" cy="12" r="7" fill="#1baf7a"/>
+          <circle cx="88" cy="75" r="7" fill="#2a78d6"/>
+          <circle cx="14" cy="75" r="7" fill="#eb6834"/>
+          <circle cx="50" cy="55" r="10" fill="#10141a"/>
+        </svg>
+        LC 3-Axis
+      </a>
     </div>
     <div class="navbar-menu">
       <div class="navbar-end">
