@@ -1,10 +1,7 @@
 # LC 3-Axis
 
 An accurate three-axis force sensor assembled from off-the-shelf load cells,
-with no custom compliant element. Four commercial load cells carry the entire
-load path, so the creep, hysteresis, and temperature behavior that would
-normally come from a custom-built flexure are instead specified on a
-datasheet.
+with no custom compliant element.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Paper](https://img.shields.io/badge/Paper-PDF-red.svg)](paper/lc-3-axis-iros2026.pdf)
@@ -17,18 +14,20 @@ Johns Hopkins University
 
 ## Overview
 
-Almost every low-cost multi-axis force sensor is built around a custom
-compliant structure, whose deformation is measured by an inexpensive readout.
-That structure sets the range and sensitivity, and also introduces creep,
-hysteresis, and temperature dependence that are rarely characterized in
-full. This design removes the custom structure: four TAL221 load cells,
-already manufacturer-characterized, carry the entire load path, and a single
-fitted matrix maps their readings to force. The result is a three-axis
-sensor for \$116.55 in parts, with a 2.6&ndash;3.5 mN noise floor, validated
-against a commercial reference to 1.0&ndash;2.5 % of full scale.
+Affordable multi-axis force sensors are usually designed with a custom
+compliant part, and the deformation of that part is measured after a load is
+applied. Any creep, hysteresis, or thermal sensitivity in that part then
+becomes a property of the finished sensor, so its accuracy depends on
+operating temperature and load history in ways a single calibration cannot
+capture. We instead developed a sensor using four commercial load cells that
+are manufacturer-characterized to carry the full load. A single fitted
+matrix maps their readings to force and accounts for assembly tolerances,
+gain differences, and wiring polarity. The resulting sensor costs
+\$116.55 in parts and has a 2.6&ndash;3.5 mN noise floor. Its output agrees
+with a commercial reference to 1.0&ndash;2.5 % of full scale.
 
-For the full write-up, measurements, and comparison to prior work, see the
-[paper](paper/lc-3-axis-iros2026.pdf) or the
+The full write-up, measurements, and comparison to prior work are in the
+[paper](paper/lc-3-axis-iros2026.pdf) and on the
 [project page](https://lucasfeng7.github.io/lc-3-axis/).
 
 ## Repository structure
@@ -83,21 +82,25 @@ toolbox/purchased components, which are not included as separate files.
 
 ## How it works
 
-Four vertical load cells respond to `Fz`, `Mx`, and `My`. A lateral force is
-recovered from its moment about the cell plane: for a contact at `(xc, yc)`
-and height `h` above the cells,
+Four vertical load cells connect the two 3D-printed plates in a square. Each
+senses compression along the vertical axis, and together they respond to
+`Fz`, `Mx`, and `My`. A lateral force is recovered from its moment about the
+cell plane. For a contact at `(xc, yc)` and height `h`,
 
 ```
 My = -Fx·h + Fz·xc
 Mx =  Fy·h - Fz·yc
 ```
 
-so the contact location has to be known — this design suits a probe with
-fixed tip geometry rather than a general-purpose contact plate. A fitted
-3×4 matrix with a bias converts the four tared cell counts into
-`(Fx, Fy, Fz)`, absorbing placement error, cell-to-cell gain variation, and
-wiring polarity. Firmware identifies which multiplexer channel each
-converter answers on at boot, so physical cell order doesn't matter.
+The contact location must therefore be known. This suits a probe with fixed
+tip geometry rather than a general-purpose contact plate.
+
+We tare each channel before loading to remove the assembly preload and the
+weight of the parts above the cells. A fitted 3&times;4 matrix with a bias
+converts the four tared counts into `(Fx, Fy, Fz)`. The same fit absorbs
+placement error, cell-to-cell gain variation, and wiring polarity. Firmware
+identifies the multiplexer channel used by each converter, so the physical
+cell order does not matter.
 
 ## Firmware
 
@@ -127,16 +130,16 @@ Lines beginning `#` are messages rather than data, so filter them when parsing.
 
 ## Calibrating
 
-Calibrate against known masses rather than another sensor:
+We calibrate against known masses rather than against another force sensor.
+For each lateral axis, the sensor is clamped axis-horizontal at a bench edge
+and known masses are hung from the tip, so gravity loads the sensing axis
+perpendicular by construction. For the axial axis, a known mass is stacked
+directly on the tip. The 3&times;4 calibration matrix is then fit against
+the tared cell counts recorded at each load.
 
-1. **Lateral axes (Fx, Fy):** clamp the sensor axis-horizontal at a bench
-   edge and hang known masses from the tip, so gravity loads the sensing
-   axis perpendicular by construction.
-2. **Axial axis (Fz):** stack a known mass directly on the tip.
-3. Fit the 3×4 calibration matrix against the tared cell counts at each
-   load.
-4. (Optional) validate against an independent reference — we used an
-   OptoForce in series on a UR5e.
+Validation against an independent reference is optional. Ours used an
+OptoForce carried in series with the sensor on a UR5e, so both instruments
+saw the same contact force.
 
 ## Citation
 
