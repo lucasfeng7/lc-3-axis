@@ -221,8 +221,23 @@ Serial at 115200, newline endings. Output is plain CSV in newtons.
 
 Lines beginning `#` are messages rather than data, so filter them when parsing.
 
-CAD is not published yet. The two plates and the tip are simple FDM parts and
-the geometry that matters is the contact height `h`, given above.
+---
+
+## CAD
+
+SolidWorks source for the printed parts is in [`cad/`](cad/):
+
+| File | Part |
+|---|---|
+| [`LC 3-Axis.SLDASM`](cad/LC%203-Axis.SLDASM) | top-level assembly |
+| [`Top Plate.SLDPRT`](cad/Top%20Plate.SLDPRT) | upper plate |
+| [`Top Plate Smaller.SLDPRT`](cad/Top%20Plate%20Smaller.SLDPRT) | upper plate, smaller variant |
+| [`Calibration Tip.SLDPRT`](cad/Calibration%20Tip.SLDPRT) | interchangeable tip used for calibration, `h` = 38.6 mm |
+
+The two plates and the tip are simple FDM parts; the geometry that matters is
+the contact height `h`, given above. The assembly references the load cells,
+converters and fasteners as toolbox/purchased components, which are not
+included as separate files.
 
 ---
 
