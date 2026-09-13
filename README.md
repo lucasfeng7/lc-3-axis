@@ -10,6 +10,9 @@ with no custom compliant element.
 Lucas Feng, Ariel Slepyan, Krishna Murthy, Nitish Thakor
 Johns Hopkins University
 
+Presented at "Sensors and Actuators for Dexterous Manipulation: Bridging
+Hardware and Application Needs," a workshop at IROS 2026 — Pittsburgh, PA.
+
 ---
 
 ## Overview
