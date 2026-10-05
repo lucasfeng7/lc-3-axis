@@ -1,99 +1,28 @@
 /*
- * LC 3-Axis - three-axis force sensor firmware
+ * LC 3-Axis force sensor firmware
  *
- * Teensy 4.0 + TCA9548A I2C multiplexer + four NAU7802 24-bit ADCs, one per
- * 500 g load cell. Streams Fx, Fy, Fz in newtons at the ADC data rate
- * (~320 frames/s).
+ * Target: Teensy 4.0 with a TCA9548A I2C multiplexer and four NAU7802
+ * 24-bit ADCs, one per 500 g load cell.
  *
- * ---------------------------------------------------------------------------
- * Measurement principle
+ * The four load cells provide Fz and the bending moments used to infer Fx
+ * and Fy. Calibration fits a single 3x4 linear map from tared cell counts
+ * to (Fx, Fy, Fz), absorbing cell gain, polarity, placement, and coupling.
  *
- *   Four vertical cells under a shared tip measure three quantities: Fz, Mx
- *   and My. Lateral force is not measured directly; it is inferred from the
- *   moment it produces about the cell plane:
+ * Calibration samples are zero-bracketed to reduce thermal drift. Lateral
+ * calibration assumes the load is applied at the calibrated tip height;
+ * off-center normal loads also generate moment and cannot be distinguished
+ * from lateral force by this geometry.
  *
- *       My = -Fx * h ,  Mx = Fy * h ,  h = tip height above the cell plane
- *
- *   The map from the four tared counts to (Fx, Fy, Fz) is therefore linear,
- *   and a single 3x4 matrix absorbs cell placement, gain spread, wiring
- *   polarity and cross-coupling. There is no per-cell sign or corner mapping
- *   to configure, and cell order does not matter, so the multiplexer
- *   channels are discovered at boot rather than hard-coded.
- *
- *   Two consequences of this geometry:
- *
- *   1. The system is rank 3, not 4. The fourth direction in cell space is a
- *      self-stress (twist) mode that no external load excites, so C'C is
- *      singular regardless of the number of samples. The fit is
- *      ridge-regularized, which drives that mode's coefficient toward zero
- *      instead of letting it amplify noise. 'f' reports the eigenvalues.
- *
- *   2. A lateral force and an off-center normal force produce the same
- *      moment (Fx*h versus an offset Fz). Z calibration loads must be
- *      centered on the tip, or the fit learns to read lateral force as
- *      normal force. Changing the tip height invalidates the X and Y rows.
- *
- * ---------------------------------------------------------------------------
- * Calibration (string and known masses)
- *
- *   X and Y: clamp the sensor axis-horizontal at the bench edge with the tip
- *   over the floor, and hang known masses directly from the tip so gravity
- *   supplies the lateral load without a pulley.
- *   Z: stand the sensor upright and stack known masses centered on the tip.
- *
- *   Axis convention: X and Y are defined by the calibration, not by the
- *   hardware, and must stay consistent across samples and later runs. Run
- *   'o' and push the tip sideways; one pair of cells rises while the other
- *   falls, and that split defines one axis. Mark it on the housing as X. A
- *   push 90 degrees away splits the other pair and defines Y. Confirm with
- *   'v x 150': a negative Fx means the pull was opposite to the calibration,
- *   and a reading in Fy means the axes are swapped.
- *
- *   +Z is a downward press on the tip, matching how stacked masses load it.
- *   With +Z down, a right-handed frame requires +Y to be +X rotated 90
- *   degrees clockwise as seen from above. The opposite choice gives a
- *   mirrored frame: self-consistent, but it differs by a sign from a
- *   right-handed sensor.
- *
- *       t              tare with nothing attached
- *       x 200          pull +X with 200 g      \
- *       x -200         pull -X with 200 g       |  repeat at 3-4 masses
- *       y 200          pull +Y                  |  spanning the working range
- *       y -200         pull -Y                  |
- *       z 200          press down with 200 g   /
- *       f              fit and report
- *       v x 150        verify with a mass not used in the fit
- *
- *   Each sample is zero-bracketed: zero, load, then zero again, using the
- *   mean of the two zeros. This cancels linear thermal drift, the dominant
- *   error over a calibration session, and the residual drift is reported as
- *   a force. Readings that are still changing are rejected, so a swinging
- *   mass cannot enter the fit.
- *
- *   All four cells are averaged over the same time window, interleaved.
- *   Reading them one after another would average each cell over a different
- *   interval, and any drift or creep between intervals would appear in Mx/My
- *   and therefore in Fx and Fy.
- *
- *   Rig notes (not correctable in firmware):
- *     - Hang the mass directly from the tip so string tension equals m*g. A
- *       pulley reduces the tension below m*g in both directions, a gain error
- *       that bidirectional pulls do not cancel.
- *     - The string must hang free and plumb. Any deflection puts part of the
- *       load on another axis.
- *     - Calibrate over the intended working range. The lateral estimate is
- *       the first to degrade under extrapolation.
- *
- * ---------------------------------------------------------------------------
- * Libraries: Adafruit NAU7802, Adafruit BusIO. EEPROM is built in.
- * Serial: 115200 baud, newline line ending. Send 'h' for the command list.
+ * Multiplexer channels are discovered at startup and stored with calibration.
+ * Serial interface: 115200 baud, newline terminated. Send 'h' for help.
  */
+
 
 #include <Wire.h>
 #include <EEPROM.h>
 #include <Adafruit_NAU7802.h>
 
-// ---------------------------------------------------------------- config ---
+// Config
 #define TCA_ADDR      0x70            // TCA9548A (A2:A0 = GND)
 #define NAU_ADDR      0x2A            // NAU7802, fixed
 #define NUM_CELLS     4
@@ -128,7 +57,7 @@
 #define EEPROM_MAGIC  0x3A01          // change whenever the stored layout changes
 #define EEPROM_ADDR   0
 
-// ----------------------------------------------------------------- state ---
+// State
 Adafruit_NAU7802 nau;
 
 uint8_t muxChan[NUM_CELLS];           // discovered at boot, stored with the calibration
@@ -152,10 +81,9 @@ float M[3][NUM_CELLS] = {
 float bias[3] = {0, 0, 0};
 bool  fitted  = false;
 
-// ----------------------------------------------------------------- types ---
-// Types used in function signatures must be declared before the first
-// function definition: the Arduino build inserts its generated function
-// prototypes at that point.
+// Types
+// Keep these declarations above the first function definition because the
+// Arduino build generates prototypes before compiling the sketch.
 
 struct Sample {
   float   c[NUM_CELLS];               // zero-bracketed counts
@@ -198,7 +126,7 @@ uint16_t calSamples = DEF_CAL_SAMPLES;
 
 uint32_t lastFrameMs = 0;
 
-// ------------------------------------------------------------- utilities ---
+// Utilities
 // Float formatter. %f is not reliable with newlib-nano on Teensy, and
 // formatting into a buffer lets each line go out in a single Serial.write.
 int fmtF(char *b, double v, int dec) {
@@ -240,7 +168,7 @@ void pf(double v, int width, int dec) {
 float toDisplay(float newtons) { return useNewton ? newtons : newtons * 1000.0f / G0; }
 const __FlashStringHelper *unitName() { return useNewton ? F("N") : F("gf"); }
 
-// ------------------------------------------------------------------- mux ---
+// Mux
 bool tcaSelect(uint8_t channel) {
   if (curChan == (int8_t)channel) return true;   // already selected
   Wire.beginTransmission(TCA_ADDR);
@@ -250,7 +178,7 @@ bool tcaSelect(uint8_t channel) {
   return true;
 }
 
-// ------------------------------------------------------------------- ADC ---
+// ADC
 bool initNAU() {
   if (!nau.begin(&Wire)) return false;
   nau.setLDO(NAU7802_3V0);
@@ -267,10 +195,8 @@ bool initNAU() {
   return true;
 }
 
-// Scan all 8 multiplexer channels and register each one that responds as a
-// NAU7802. Cells are numbered in ascending channel order. The matrix does not
-// depend on cell order, and the channel map is stored with the calibration so
-// a missing cell cannot silently renumber the others.
+// Discover NAU7802 devices in mux-channel order. Store the channel map with
+// calibration so missing hardware cannot silently change cell indexing.
 bool discoverCells(bool verbose) {
   curChan = -1;
   Wire.beginTransmission(TCA_ADDR);
@@ -308,11 +234,9 @@ bool discoverCells(bool verbose) {
   return nFound == NUM_CELLS;
 }
 
-// ----------------------------------------------------------- acquisition ---
-// Acquire one averaged block. Cells are polled round-robin so that every
-// cell's mean covers the same time window (see the header). Also returns each
-// cell's standard deviation and drift (second-half mean minus first-half
-// mean), which the stability check tests.
+// Acquisition
+// Acquire an averaged block using round-robin polling so all cells cover the
+// same time window. Also compute per-cell noise and intra-block drift.
 bool acquire(Block &blk, uint16_t want) {
   if (nFound == 0) return false;
   double   sum[NUM_CELLS] = {0}, sum2[NUM_CELLS] = {0}, firstSum[NUM_CELLS] = {0};
@@ -351,9 +275,8 @@ bool acquire(Block &blk, uint16_t want) {
   return true;
 }
 
-// Averaged read that retries while the signal is still settling, and accepts
-// the last attempt with a warning after ACQ_RETRIES. Thresholds are scaled to
-// the noise floor measured at tare rather than hard-coded.
+// Retry averaged reads while the signal is settling. Stability thresholds are
+// relative to the noise floor measured during tare.
 bool acquireStable(Block &blk, const __FlashStringHelper *what) {
   delay(SETTLE_MS);                    // allow load-cell creep to settle
   for (uint8_t attempt = 1; attempt <= ACQ_RETRIES; attempt++) {
@@ -392,7 +315,7 @@ bool acquireStable(Block &blk, const __FlashStringHelper *what) {
   return true;
 }
 
-// ------------------------------------------------------------- streaming ---
+// Streaming
 void pollCells() {
   for (uint8_t c = 0; c < nFound; c++) {
     if (!tcaSelect(muxChan[c])) continue;
@@ -442,7 +365,7 @@ void emitFrame() {
   lastFrameMs = millis();
 }
 
-// ------------------------------------------------------------------ tare ---
+// Tare
 // Tare all cells and record each cell's noise floor, which the stability
 // checks are scaled against.
 void tareAll() {
@@ -459,11 +382,7 @@ void tareAll() {
     Serial.println();
   }
   if (fitted) {
-    // Report the resulting force resolution. Cell noise is independent, so it
-    // is combined in quadrature. Passing the noise vector through
-    // applyMatrix() would treat it as one coherent load: the opposite-sign
-    // coefficients in the Fx and Fy rows would cancel and understate those
-    // axes, while Fz, whose coefficients share a sign, would be overstated.
+    // Propagate independent cell noise through each force row in quadrature.
     const char *nm[3] = {"Fx ", "  Fy ", "  Fz "};
     Serial.print(F("# 1-sigma single-sample resolution ~ "));
     for (uint8_t r = 0; r < 3; r++) {
@@ -535,7 +454,7 @@ void driftTest(uint16_t seconds) {
   }
 }
 
-// -------------------------------------------------------- linear algebra ---
+// Linear algebra
 // Gauss-Jordan inverse of a small symmetric positive-definite matrix. The
 // full inverse, not just a solve, is needed for the leave-one-out residuals.
 bool invertN(double A[NPAR][NPAR], double inv[NPAR][NPAR]) {
@@ -602,7 +521,7 @@ void eigenvalues4(const double Ain[NUM_CELLS][NUM_CELLS], double ev[NUM_CELLS]) 
       if (ev[j] > ev[i]) { double s = ev[i]; ev[i] = ev[j]; ev[j] = s; }
 }
 
-// --------------------------------------------------------------- fitting ---
+// Fitting
 // Ridge least squares of each force row on [c0 c1 c2 c3 1]. Only the four
 // count columns are regularized, to suppress the unexcited twist mode; the
 // bias column is not penalized.
@@ -825,7 +744,7 @@ void reportFit() {
   reportCrosstalk();
 }
 
-// -------------------------------------------------------- sample capture ---
+// Sample capture
 // Blocking prompt. Returns false if the operator aborts with 'q'.
 bool prompt(const __FlashStringHelper *msg) {
   Serial.print(F("# ")); Serial.print(msg); Serial.println(F("  [ENTER, or q to abort]"));
@@ -845,15 +764,11 @@ bool prompt(const __FlashStringHelper *msg) {
   }
 }
 
-// Zero-bracketed capture: zero, load, zero. The mean of the two zeros cancels
-// drift that is linear over the measurement. Returns false if the operator
-// aborts or the sample is rejected.
+// Capture zero-load-zero and subtract the mean zero to suppress linear drift.
 bool captureBracketed(const __FlashStringHelper *loadMsg, float out[NUM_CELLS]) {
   Block z0, load, z1;
 
-  // The stability check is scaled to the tare noise floor, which is not stored
-  // in EEPROM. After a reboot without a tare it would fall back to a 1-count
-  // threshold and reject every read, so require a tare first.
+  // Noise statistics are not persisted, so calibration requires a fresh tare.
   if (noiseSd[0] == 0) {
     Serial.println(F("# ! tare first ('t') - the stability check needs the noise floor"));
     return false;
@@ -886,16 +801,13 @@ bool captureBracketed(const __FlashStringHelper *loadMsg, float out[NUM_CELLS]) 
   }
   const double se = (noiseSd[k] > 1 ? noiseSd[k] : 1) / sqrt((double)calSamples);
 
-  // Reject two operator errors that would otherwise produce a plausible but
-  // wrong sample. First: no load was applied.
+  // Reject captures with no measurable applied load.
   if (peak < 20 * se) {
     Serial.print(F("# ! no load detected - peak was only ")); pf(peak, 0, 0);
     Serial.println(F(" counts. Nothing applied? Sample discarded."));
     return false;
   }
-  // Second: the closing zero still reads near the loaded value, so the load
-  // was never removed. The bracketed counts would be halved while the label
-  // still gives the full mass, a 2x gain error.
+  // Reject captures where the closing zero indicates the load was not removed.
   if (fabs(z1.mean[k] - load.mean[k]) < 0.25 * peak) {
     Serial.println(F("# ! the closing zero still reads LOADED - the weight was left on."));
     Serial.println(F("#   Tell-tale: zero drift comes out at 2x the counts. That would"));
@@ -903,8 +815,7 @@ bool captureBracketed(const __FlashStringHelper *loadMsg, float out[NUM_CELLS]) 
     return false;
   }
 
-  // Report the zero shift over the bracket relative to the signal; it sets
-  // the error floor for this sample.
+  // Report zero shift relative to signal magnitude as a drift diagnostic.
   Serial.print(F("# zero drift over the bracket: ")); pf(worstDrift, 0, 0);
   Serial.print(F(" counts on cell ")); Serial.print(worstCell);
   Serial.print(F(" = ")); pf(100.0 * worstDrift / peak, 0, 1);
@@ -927,15 +838,8 @@ bool captureBracketed(const __FlashStringHelper *loadMsg, float out[NUM_CELLS]) 
   return true;
 }
 
-// Convert a known mass into a force vector in newtons.
-//
-// angleDeg is the load direction measured from the sensor's +Z axis:
-// 90 = purely lateral, 0 = straight down onto the tip, >90 = pulling upward.
-// For example, 'x <g> 70' is a lateral pull at 70 deg, which carries a
-// compressive Z component of cos(70 deg) = 0.34 of the load.
-//
-// The lateral component takes the sign of grams; the Z component does not,
-// since a hanging mass presses into the tip in either tilt direction.
+// Convert a known mass and load angle to a force vector in newtons.
+// angleDeg is measured from +Z: 0 deg is axial and 90 deg is purely lateral.
 void loadVector(uint8_t axis, float grams, float angleDeg, float f[3]) {
   const float mag = fabsf(grams) / 1000.0f * G0;
   f[0] = f[1] = f[2] = 0;
@@ -1063,12 +967,9 @@ void verifySample(uint8_t axis, float grams, float angleDeg) {
   Serial.println();
 }
 
-// ----------------------------------------------------------- axis finder ---
-// Interactive aid for choosing the X/Y convention. The sensor has no
-// intrinsic X and Y, so this shows how the cells respond rather than naming
-// an axis. A sideways push makes one pair of cells rise and the other fall;
-// that split defines the axis just pushed along. A push 90 degrees away
-// splits the other pair. Re-tares on entry, so start with the sensor unloaded.
+// Axis finder
+// Interactive X/Y orientation aid. Re-tares on entry and reports the cell
+// response pattern for a lateral push.
 void axisFinder() {
   if (nFound != NUM_CELLS) { Serial.println(F("# ! need all four cells")); return; }
 
@@ -1166,14 +1067,9 @@ void dropSample(int idx) {
   else { fitted = false; Serial.println(F("# too few samples left to refit")); }
 }
 
-// ----------------------------------------------------------- text backup ---
-// Export the calibration as plain text that can be saved to a file and pasted
-// back to restore it. This covers what EEPROM does not survive: a failed or
-// replaced board, or an accidental 'c'.
-//
-// Only the samples are exported; the matrix is refit on import. The samples
-// are the measurement and the matrix is derived from them, and refitting
-// avoids round-tripping ~1e-6 coefficients through decimal text.
+// Text backup
+// Export calibration samples as text for backup and restore. The matrix is
+// refit on import rather than serialized independently.
 void exportCal() {
   Serial.println(F("# ===== LC 3-Axis calibration export ====="));
   Serial.println(F("# Paste this whole block back in to restore, then 'w' to save."));
@@ -1262,7 +1158,7 @@ void importLine(char *s) {
   }
 }
 
-// ---------------------------------------------------------------- EEPROM ---
+// EEPROM
 void saveCal() {
   int a = EEPROM_ADDR;
   EEPROM.put(a, (uint16_t)EEPROM_MAGIC);                       a += sizeof(uint16_t);
@@ -1289,8 +1185,7 @@ bool loadCal() {
   EEPROM.get(a, f8);                                           a += 1;
   EEPROM.get(a, n8);                                           a += 1;
 
-  // A cell missing at this boot would renumber the others and invalidate the
-  // matrix, so refuse to load unless the channel map matches.
+  // Refuse calibration data if the discovered channel map has changed.
   bool sameMap = (nFound == NUM_CELLS);
   for (uint8_t c = 0; c < NUM_CELLS && sameMap; c++) sameMap = (chan[c] == muxChan[c]);
   if (!sameMap) {
@@ -1348,7 +1243,7 @@ void clearCal(bool confirmed) {
   Serial.println(F("# calibration cleared (matrix, zeros, samples, EEPROM)"));
 }
 
-// --------------------------------------------------------------- reports ---
+// Reports
 void status() {
   Serial.print(F("# cells ")); Serial.print(nFound);
   Serial.print(F("/")); Serial.print(NUM_CELLS); Serial.print(F(" on mux ch"));
@@ -1419,10 +1314,9 @@ void help() {
   Serial.println(F("   ('#' lines are messages)"));
 }
 
-// ------------------------------------------------------- command parsing ---
-// Commands are line-based, so a command and its arguments arrive together and
-// parsing never blocks on partial input. The buffer holds a full '!s' import
-// line (tag plus 8 numbers).
+// Command parsing
+// Commands are newline-delimited; the buffer also accommodates imported
+// calibration sample records.
 char lineBuf[160];
 uint8_t lineLen = 0;
 
@@ -1556,7 +1450,7 @@ void serviceSerial() {
   }
 }
 
-// -------------------------------------------------- Arduino entry points ---
+// Arduino entry points
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 2000) {}
